@@ -5,7 +5,7 @@
 const CONFIG = {
   SUPABASE_URL: "https://ykyzmlgitpcjuwctijvq.supabase.co",
   SUPABASE_ANON_KEY: "qMYhBXJtGlDhVu63JyDN3A_Kg5E8FdY",
-  SURVEY_ID: "demo-survey"
+  SURVEY_ID: "ikmz-scientifica"
 };
 
 const UI = {
