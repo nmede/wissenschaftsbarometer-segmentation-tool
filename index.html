@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wissenschaft & Gesellschaft</title>
+<style>
+/* ---------------------------------------------------------------------
+   Design: a calm "field notebook" aesthetic. Ink-blue on warm paper,
+   a single ochre accent, a slab-serif display face against a clean
+   grotesque body. Signature element: a four-square segment compass that
+   fills in as the respondent progresses, echoing the 2x2 typology.
+   --------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --paper:#F3EEE4;
+  --paper-2:#EAE3D4;
+  --ink:#1C2B3A;
+  --ink-soft:#41566B;
+  --ochre:#C57B33;
+  --ochre-deep:#A5621F;
+  --line:#CFC5B0;
+  --white:#FBF8F1;
+  --good:#3F6B52;
+  --shadow:0 1px 0 rgba(28,43,58,.04),0 8px 30px -18px rgba(28,43,58,.45);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  background-image:radial-gradient(circle at 12% 8%,rgba(197,123,51,.05),transparent 40%),
+                   radial-gradient(circle at 88% 92%,rgba(28,43,58,.05),transparent 42%);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:640px;margin:0 auto;padding:24px 20px 96px;min-height:100vh;display:flex;flex-direction:column}
+
+/* header */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.mark{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:600;font-size:15px;letter-spacing:.2px}
+.compass{width:22px;height:22px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;flex:0 0 auto}
+.compass i{background:var(--line);border-radius:2px;transition:background .4s ease}
+.compass i.on{background:var(--ochre)}
+.langbar{display:flex;gap:2px;background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.langbar button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:600;color:var(--ink-soft);padding:5px 11px;border-radius:999px;cursor:pointer;transition:.2s}
+.langbar button[aria-pressed="true"]{background:var(--ink);color:var(--white)}
+
+/* progress */
+.progress{margin:18px 0 4px}
+.bar{height:5px;background:var(--paper-2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ochre),var(--ochre-deep));border-radius:999px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.count{font-size:12px;color:var(--ink-soft);margin-top:8px;letter-spacing:.3px}
+
+/* card */
+main{flex:1;display:flex;flex-direction:column;justify-content:center}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 26px;animation:rise .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.intro-lead{font-size:14.5px;line-height:1.55;color:var(--ink-soft);border-left:3px solid var(--ochre);padding-left:14px;margin:0 0 20px}
+.qtext{font-family:'Fraunces',serif;font-weight:600;font-size:23px;line-height:1.32;margin:0 0 22px;letter-spacing:-.01em}
+
+/* scale options */
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:11px;padding:13px 15px;font:inherit;font-size:15px;color:var(--ink);cursor:pointer;transition:.16s;line-height:1.35}
+.opt:hover{border-color:var(--ochre);background:var(--white)}
+.opt .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:grid;place-items:center;transition:.16s}
+.opt[aria-pressed="true"]{border-color:var(--ochre);background:#FBF1E4}
+.opt[aria-pressed="true"] .dot{border-color:var(--ochre);background:var(--ochre)}
+.opt[aria-pressed="true"] .dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--white)}
+.opt .num{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--ink-soft);min-width:14px}
+.scaleends{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);margin:2px 2px 12px;font-weight:500}
+.dk{margin-top:6px}
+.dk .opt{background:transparent;border-style:dashed;color:var(--ink-soft)}
+
+/* inputs */
+.year-input{width:100%;font:inherit;font-size:20px;font-family:'Fraunces',serif;padding:15px 16px;border:1.5px solid var(--line);border-radius:11px;background:var(--paper);color:var(--ink);text-align:center;letter-spacing:2px}
+.year-input:focus{outline:none;border-color:var(--ochre);background:var(--white)}
+
+/* nav */
+.nav{display:flex;gap:12px;margin-top:24px;align-items:center}
+.btn{font:inherit;font-weight:600;font-size:15px;border-radius:11px;padding:13px 22px;cursor:pointer;border:1.5px solid transparent;transition:.18s}
+.btn-primary{background:var(--ink);color:var(--white);flex:1}
+.btn-primary:hover{background:#12202d}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--ink-soft)}
+.skip{background:none;border:0;color:var(--ink-soft);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:8px}
+.hint{font-size:12.5px;color:var(--ochre-deep);margin-top:12px;min-height:16px}
+
+/* start + end screens */
+.hero .qtext{font-size:30px;margin-bottom:10px}
+.hero-sub{font-size:16px;color:var(--ink-soft);margin:0 0 18px;line-height:1.5}
+.privacy{font-size:13px;color:var(--ink-soft);line-height:1.55;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:22px}
+.result{text-align:center}
+.result .seg{font-family:'Fraunces',serif;font-weight:600;font-size:30px;color:var(--ochre-deep);margin:6px 0 12px}
+.result .segdesc{font-size:15px;color:var(--ink-soft);line-height:1.55;max-width:440px;margin:0 auto}
+.check{width:56px;height:56px;border-radius:50%;background:var(--good);display:grid;place-items:center;margin:0 auto 16px}
+.check svg{width:28px;height:28px}
+.foot{margin-top:auto;padding-top:28px;font-size:11.5px;color:var(--ink-soft);text-align:center;line-height:1.5}
+.foot a{color:var(--ink-soft)}
+.saving{display:inline-flex;align-items:center;gap:8px}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="mark">
+      <div class="compass" id="compass"><i></i><i></i><i></i><i></i></div>
+      <span id="brand">Wissenschaft &amp; Gesellschaft</span>
+    </div>
+    <div class="langbar" id="langbar" role="group" aria-label="Language">
+      <button data-lang="de" aria-pressed="true">DE</button>
+      <button data-lang="fr" aria-pressed="false">FR</button>
+      <button data-lang="it" aria-pressed="false">IT</button>
+    </div>
+  </div>
+
+  <div class="progress" id="progressWrap" hidden>
+    <div class="bar"><span id="barFill"></span></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <main id="stage"></main>
+
+  <div class="foot">
+    <span id="footText">Fragebogen basierend auf dem Wissenschaftsbarometer Schweiz.</span><br>
+    <span>Instrument &amp; Typologie: Wissenschaftsbarometer Schweiz · Universität Zürich.</span>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/content.js"></script>
+<script src="js/scoring.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var lang = "de";
+  var step = -1;              // -1 = start screen
+  var answers = {};          // id -> value (1..5 / 1..4 / 98 / null)
+  var startedAt = Date.now();
+
+  // Survey ID: from ?c= (multi-customer, one deployment) or CONFIG.SURVEY_ID.
+  var _params = new URLSearchParams(location.search);
+  var SURVEY = _params.get("c") || CONFIG.SURVEY_ID;
+  // Optional: force a start language with ?lang=fr
+  if(["de","fr","it"].indexOf(_params.get("lang")) !== -1) lang = _params.get("lang");
+
+  // Supabase client (guarded; app still runs for preview without config)
+  var sb = null;
+  try {
+    if (CONFIG.SUPABASE_URL.indexOf("YOUR-PROJECT") === -1 && window.supabase) {
+      sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+    }
+  } catch(e){ sb = null; }
+
+  var stage = document.getElementById("stage");
+  var progressWrap = document.getElementById("progressWrap");
+  var barFill = document.getElementById("barFill");
+  var count = document.getElementById("count");
+
+  function t(key){ return UI[lang][key]; }
+  function fill(str,map){ return str.replace(/\{(\w+)\}/g,function(_,k){return map[k];}); }
+
+  // ---- language switch ----
+  document.getElementById("langbar").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    lang = b.getAttribute("data-lang");
+    document.documentElement.lang = lang;
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
+      x.setAttribute("aria-pressed", x===b ? "true":"false");
+    });
+    document.getElementById("brand").textContent = t("start_title");
+    document.getElementById("footText").textContent =
+      lang==="fr" ? "Questionnaire basé sur le Baromètre scientifique suisse." :
+      lang==="it" ? "Questionario basato sul Barometro della scienza svizzero." :
+      "Fragebogen basierend auf dem Wissenschaftsbarometer Schweiz.";
+    render();
+  });
+
+  // ---- compass fill ----
+  function updateCompass(){
+    var quarters = document.querySelectorAll("#compass i");
+    var frac = step < 0 ? 0 : (step+1)/QUESTIONS.length;
+    quarters.forEach(function(q,i){ q.classList.toggle("on", frac > i/4); });
+  }
+
+  function setProgress(){
+    if(step < 0){ progressWrap.hidden = true; updateCompass(); return; }
+    progressWrap.hidden = false;
+    var pct = ((step+1)/QUESTIONS.length)*100;
+    barFill.style.width = pct+"%";
+    count.textContent = fill(t("progress"), {n:step+1,total:QUESTIONS.length});
+    updateCompass();
+  }
+
+  // ---- renderers ----
+  function render(){
+    setProgress();
+    if(step === -1) return renderStart();
+    if(step >= QUESTIONS.length) return renderEnd();
+    renderQuestion(QUESTIONS[step]);
+  }
+
+  function renderStart(){
+    stage.innerHTML =
+      '<div class="card hero">'+
+        '<h1 class="qtext">'+t("start_title")+'</h1>'+
+        '<p class="hero-sub">'+t("start_sub")+'</p>'+
+        '<div class="privacy">'+t("start_intro")+'</div>'+
+        '<div class="nav"><button class="btn btn-primary" id="go">'+t("start_button")+'</button></div>'+
+      '</div>';
+    document.getElementById("go").onclick = function(){ step = 0; startedAt = Date.now(); render(); };
+  }
+
+  function scaleLabels(q){
+    if(q.type==="know4") return KNOW_SCALE[lang];
+    return null;
+  }
+
+  function renderQuestion(q){
+    var html = '<div class="card">';
+    if(q.intro && q.intro[lang]) html += '<p class="intro-lead">'+q.intro[lang]+'</p>';
+    html += '<h2 class="qtext">'+q.text[lang]+'</h2>';
+
+    if(q.type === "scale5"){
+      var ends = SCALES[q.scale][lang];
+      html += '<div class="scaleends"><span>1 · '+ends[0]+'</span><span>'+ends[1]+' · 5</span></div>';
+      html += '<div class="opts">';
+      for(var i=1;i<=5;i++){
+        var sel = answers[q.id]===i ? ' aria-pressed="true"':'';
+        html += '<button class="opt" data-val="'+i+'"'+sel+'><span class="dot"></span><span class="num">'+i+'</span></button>';
+      }
+      html += '</div>';
+      html += dkBlock(q);
+    }
+    else if(q.type === "know4"){
+      var labels = KNOW_SCALE[lang];
+      html += '<div class="opts">';
+      for(var k=1;k<=4;k++){
+        var s2 = answers[q.id]===k ? ' aria-pressed="true"':'';
+        html += '<button class="opt" data-val="'+k+'"'+s2+'><span class="dot"></span><span>'+labels[k-1]+'</span></button>';
+      }
+      html += '</div>';
+      html += dkBlock(q);
+    }
+    else if(q.type === "age"){
+      var yr = answers.age || "";
+      html += '<input class="year-input" id="yearInput" inputmode="numeric" maxlength="4" placeholder="1990" value="'+yr+'">';
+      html += dkBlock(q,true);
+    }
+    else if(q.type === "gender" || q.type === "education"){
+      var opts = q.options[lang];
+      html += '<div class="opts">';
+      for(var o=0;o<opts.length;o++){
+        var s3 = answers[q.id]===(o+1) ? ' aria-pressed="true"':'';
+        html += '<button class="opt" data-val="'+(o+1)+'"'+s3+'><span class="dot"></span><span>'+opts[o]+'</span></button>';
+      }
+      html += '</div>';
+      html += dkBlock(q,true);
+    }
+
+    html += '<div class="hint" id="hint"></div>';
+    html += '<div class="nav">';
+    if(step>0) html += '<button class="btn btn-ghost" id="back">'+t("back")+'</button>';
+    var last = step === QUESTIONS.length-1;
+    html += '<button class="btn btn-primary" id="next">'+(last?t("submit"):t("next"))+'</button>';
+    html += '</div>';
+    html += '<div style="text-align:center"><button class="skip" id="skip">'+skipLabel()+'</button></div>';
+    html += '</div>';
+    stage.innerHTML = html;
+    wireQuestion(q);
+  }
+
+  function dkBlock(q, noDK){
+    if(noDK) return '';                      // demographics: skip only, no "don't know"
+    return '<div class="dk"><button class="opt" data-val="98" '+(answers[q.id]===98?'aria-pressed="true"':'')+'>'+
+           '<span class="dot"></span><span>'+t("dont_know")+'</span></button></div>';
+  }
+  function skipLabel(){
+    return lang==="fr" ? "Passer cette question" : lang==="it" ? "Salta questa domanda" : "Diese Frage überspringen";
+  }
+
+  function wireQuestion(q){
+    var hint = document.getElementById("hint");
+    Array.prototype.forEach.call(stage.querySelectorAll(".opt"), function(btn){
+      btn.onclick = function(){
+        var v = parseInt(btn.getAttribute("data-val"),10);
+        answers[q.id] = v;
+        Array.prototype.forEach.call(stage.querySelectorAll(".opt"), function(b){ b.setAttribute("aria-pressed","false"); });
+        btn.setAttribute("aria-pressed","true");
+        hint.textContent = "";
+      };
+    });
+    if(q.type==="age"){
+      var yi = document.getElementById("yearInput");
+      yi.oninput = function(){ yi.value = yi.value.replace(/\D/g,"").slice(0,4); answers.age = yi.value; };
+    }
+    var back = document.getElementById("back"); if(back) back.onclick = function(){ step--; render(); };
+    document.getElementById("skip").onclick = function(){ answers[q.id] = null; advance(); };
+    document.getElementById("next").onclick = function(){
+      // demographics + age are optional-but-prompt; all items allow skip via the skip link
+      if(answers[q.id] === undefined){
+        hint.textContent = t("required_hint");
+        return;
+      }
+      advance();
+    };
+  }
+
+  function advance(){
+    if(step === QUESTIONS.length-1){ step = QUESTIONS.length; render(); return; }
+    step++; render();
+  }
+
+  // ---- submit + result ----
+  function renderEnd(){
+    var scored = classify(answers);
+    stage.innerHTML =
+      '<div class="card result">'+
+        '<div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>'+
+        '<h2 class="qtext" style="font-size:26px">'+t("thanks_title")+'</h2>'+
+        '<p class="hero-sub" id="saveState">'+savingMarkup()+'</p>'+
+        '<div id="segBlock" hidden>'+
+          '<p class="segdesc">'+t("thanks_result")+'</p>'+
+          '<div class="seg">'+scored.label+'</div>'+
+          '<p class="segdesc">'+SEGMENT_DESC[scored.segment][lang]+'</p>'+
+        '</div>'+
+        '<div id="errBlock" hidden>'+
+          '<p class="segdesc" style="color:var(--ochre-deep)">'+t("thanks_error")+'</p>'+
+          '<div class="nav" style="justify-content:center"><button class="btn btn-primary" id="retry" style="flex:0 0 auto">'+t("retry")+'</button></div>'+
+        '</div>'+
+      '</div>';
+    submit(scored);
+  }
+  function savingMarkup(){
+    var m = lang==="fr" ? "Enregistrement…" : lang==="it" ? "Salvataggio…" : "Speichern…";
+    return '<span class="saving"><span class="spin"></span>'+m+'</span>';
+  }
+
+  function buildRow(scored){
+    return {
+      survey_id: SURVEY,
+      language: lang,
+      segment: scored.segment,
+      segment_label: scored.label,
+      prob_sciencephiles: round4(scored.probabilities[1]),
+      prob_critically_interested: round4(scored.probabilities[2]),
+      prob_passive_supporters: round4(scored.probabilities[3]),
+      prob_disengaged: round4(scored.probabilities[4]),
+      idx_sl: scored.idx_SL,
+      n_missing: scored.nMissing,
+      age_year: answers.age ? parseInt(answers.age,10) : null,
+      gender: answers.gender || null,
+      education: answers.education || null,
+      answers: answers,
+      duration_sec: Math.round((Date.now()-startedAt)/1000)
+    };
+  }
+  function round4(x){ return x==null?null:Math.round(x*1e4)/1e4; }
+
+  function submit(scored){
+    var saveState = document.getElementById("saveState");
+    var segBlock = document.getElementById("segBlock");
+    var errBlock = document.getElementById("errBlock");
+    function showResult(){ saveState.textContent = t("thanks_sub"); segBlock.hidden = false; }
+    function showError(){
+      saveState.textContent = "";
+      errBlock.hidden = false;
+      document.getElementById("retry").onclick = function(){ errBlock.hidden = true; saveState.innerHTML = savingMarkup(); submit(scored); };
+    }
+    if(!sb){                              // preview mode without a backend
+      setTimeout(showResult, 500); return;
+    }
+    sb.from("responses").insert(buildRow(scored)).then(function(res){
+      if(res.error){ console.error(res.error); showError(); } else { showResult(); }
+    }).catch(function(err){ console.error(err); showError(); });
+  }
+
+  // Reflect the initial language (in case ?lang= overrode the default)
+  (function syncLang(){
+    document.documentElement.lang = lang;
+    document.getElementById("brand").textContent = t("start_title");
+    Array.prototype.forEach.call(document.querySelectorAll("#langbar button"), function(x){
+      x.setAttribute("aria-pressed", x.getAttribute("data-lang")===lang ? "true":"false");
+    });
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>
