@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wissenschaftsbarometer — Segment Monitor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@font-face{font-family:"Akkurat Pro";src:url("fonts/AkkuratPro-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+:root{
+  --red:#e30613; --red-90:#e63323; --red-70:#ed694b; --red-40:#f6af95; --red-20:#fcd9ca; --red-10:#fdece3;
+  --ink:#1d1d1d; --ink-60:#5f5f5f; --line:#e2e2e2; --white:#fff;
+  --s1:#e30613; --s2:#ed694b; --s3:#f6af95; --s4:#fcd9ca;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Akkurat Pro","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--white);font-size:15px}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 22px 80px}
+.brandbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:14px;border-bottom:3px solid var(--ink);margin-bottom:20px}
+.brandbar img{height:36px;display:block}
+.langbar{display:flex;border:2px solid var(--ink)}
+.langbar button{border:0;background:var(--white);font:inherit;font-size:12px;font-weight:700;color:var(--ink);padding:5px 10px;cursor:pointer}
+.langbar button + button{border-left:2px solid var(--ink)}
+.langbar button[aria-pressed="true"]{background:var(--ink);color:var(--white)}
+
+.gate{max-width:420px;margin:8vh auto;border:2px solid var(--ink);padding:32px 30px}
+.gate h1{font-family:"Bebas Neue",sans-serif;font-size:38px;letter-spacing:.03em;margin:0 0 4px}
+.gate h1 b{color:var(--red)}
+.gate p{color:var(--ink-60);font-size:14px;margin:0 0 20px;line-height:1.5}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.field input{width:100%;font:inherit;font-size:15px;padding:11px 13px;border:2px solid var(--ink)}
+.field input:focus{outline:none;border-color:var(--red)}
+.btn{font:inherit;font-weight:700;font-size:15px;border:2px solid var(--red);padding:12px 20px;cursor:pointer;background:var(--red);color:var(--white);width:100%;transition:.15s}
+.btn:hover{background:var(--red-90);border-color:var(--red-90)}
+.gate-err{color:var(--red);font-size:13px;margin-top:10px;min-height:16px;font-weight:700}
+
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:20px}
+.title{font-family:"Bebas Neue",sans-serif;font-size:40px;line-height:1;letter-spacing:.02em}
+.title b{color:var(--red)}
+.sub{color:var(--ink-60);font-size:13px;margin-top:4px}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--red);border:2px solid var(--red);padding:5px 12px;letter-spacing:.04em;text-transform:uppercase}
+.live .pulse{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.toolbtn{background:var(--white);border:2px solid var(--ink);color:var(--ink);font:inherit;font-size:12px;font-weight:700;padding:6px 13px;cursor:pointer;letter-spacing:.04em;text-transform:uppercase}
+.toolbtn:hover{background:var(--line)}
+.toolbtn:disabled{opacity:.4;cursor:not-allowed}
+
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;border:2px solid var(--ink);margin-bottom:20px}
+.kpi{padding:16px 18px;border-right:2px solid var(--ink)}
+.kpi:last-child{border-right:0}
+.kpi .n{font-family:"Bebas Neue",sans-serif;font-size:36px;line-height:1}
+.kpi .l{font-size:11.5px;color:var(--ink-60);margin-top:4px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+@media(max-width:760px){.kpi{border-right:0;border-bottom:2px solid var(--ink)}.kpi:last-child{border-bottom:0}}
+
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:18px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.panel{border:2px solid var(--ink);padding:18px 20px;margin-bottom:18px}
+.grid .panel{margin-bottom:0}
+.panel h2{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:.03em;margin:0 0 14px}
+.panel h2 b{color:var(--red)}
+.panel h3{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);margin:20px 0 10px}
+
+.segrow{display:flex;align-items:center;gap:14px;margin-bottom:13px}
+.segrow:last-child{margin-bottom:0}
+.segname{width:170px;flex:0 0 auto;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:9px;line-height:1.2}
+.swatch{width:12px;height:12px;flex:0 0 auto;border:1px solid var(--ink)}
+.track{flex:1;height:26px;background:var(--red-10);position:relative}
+.trackfill{height:100%;transition:width .5s ease;min-width:2px;border-right:1px solid var(--ink)}
+.segval{width:150px;flex:0 0 auto;text-align:right;font-size:12.5px;color:var(--ink-60);font-variant-numeric:tabular-nums}
+.segval b{color:var(--ink);font-size:15px}
+
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut{width:150px;height:150px;flex:0 0 auto}
+.legendlist{font-size:13px}
+.legendlist div{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.legendlist b{font-variant-numeric:tabular-nums;margin-left:auto;padding-left:12px}
+
+.bars{display:flex;gap:16px;flex-wrap:wrap}
+.barcol{flex:1;min-width:130px;max-width:230px}
+.barcol .cap{font-size:12.5px;margin-bottom:7px;font-weight:700}
+.barcol .cap span{color:var(--ink-60);font-weight:400}
+.stack{display:flex;height:22px;background:var(--red-10);border:1px solid var(--ink)}
+.stack span{display:block}
+
+/* per-question distributions */
+.qrow{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1.2fr) 120px;gap:16px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.qrow .qt{font-size:13px;line-height:1.35}
+.qrow .qstack{display:flex;height:20px;background:#f4f4f4;border:1px solid var(--ink)}
+.qrow .qstack span{display:block}
+.qrow .qmeta{font-size:12px;color:var(--ink-60);text-align:right;font-variant-numeric:tabular-nums}
+.qlegend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11.5px;color:var(--ink-60);margin:4px 0 8px}
+.qlegend i{display:inline-block;width:10px;height:10px;border:1px solid var(--ink);margin-right:5px;vertical-align:-1px}
+@media(max-width:680px){.qrow{grid-template-columns:1fr;gap:6px}.qrow .qmeta{text-align:left}}
+
+.danger{border-color:var(--red)}
+.danger h2{color:var(--red)}
+.confirmbox{background:var(--red-10);border:2px solid var(--red);padding:14px 16px;margin-top:12px}
+.confirmbox p{margin:0 0 12px;font-weight:700}
+.btn-danger{background:var(--red);color:#fff;border:2px solid var(--red);font:inherit;font-weight:700;padding:10px 18px;cursor:pointer;margin-right:10px}
+.btn-cancel{background:#fff;color:var(--ink);border:2px solid var(--ink);font:inherit;font-weight:700;padding:10px 18px;cursor:pointer}
+.empty{color:var(--ink-60);font-size:14px;padding:10px 0;line-height:1.5}
+.foot{margin-top:26px;font-size:12px;color:var(--ink-60);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar">
+    <img src="img/logo.png" alt="Wissenschaftsbarometer">
+    <div class="langbar" id="langbar">
+      <button data-lang="de" aria-pressed="true">DE</button>
+      <button data-lang="fr" aria-pressed="false">FR</button>
+      <button data-lang="it" aria-pressed="false">IT</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div id="gate" class="gate">
+    <h1>Segment<b>.</b>Monitor</h1>
+    <p data-t="gate_intro"></p>
+    <div class="field"><label data-t="gate_survey"></label><input id="gSurvey" placeholder="museum-basel-2026" autocomplete="off"></div>
+    <div class="field"><label data-t="gate_code"></label><input id="gCode" type="password" placeholder="••••••••" autocomplete="off"></div>
+    <button class="btn" id="gEnter" data-t="gate_open"></button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+
+  <div id="app" hidden>
+    <div class="head">
+      <div>
+        <div class="title"><span data-t="title"></span><b>.</b></div>
+        <div class="sub" id="surveyTag"></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="toolbtn" id="csvBtn" data-t="download"></button>
+        <button class="toolbtn" id="refreshBtn" data-t="refresh"></button>
+        <span class="live"><span class="pulse"></span><span id="liveText">Live</span></span>
+      </div>
+    </div>
+
+    <div class="strip" id="kpis"></div>
+
+    <div class="grid">
+      <div class="panel"><h2><span data-t="p_segments"></span><b>.</b></h2><div id="segBars"></div></div>
+      <div class="panel"><h2><span data-t="p_share"></span><b>.</b></h2>
+        <div class="donut-wrap"><svg class="donut" id="donut" viewBox="0 0 42 42"></svg><div class="legendlist" id="donutLegend"></div></div>
+      </div>
+    </div>
+
+    <div class="panel"><h2><span data-t="p_gender"></span><b>.</b></h2><div class="bars" id="bdGender"></div></div>
+    <div class="panel"><h2><span data-t="p_age"></span><b>.</b></h2><div class="bars" id="bdAge"></div></div>
+    <div class="panel"><h2><span data-t="p_edu"></span><b>.</b></h2><div class="bars" id="bdEdu"></div></div>
+    <div class="panel"><h2><span data-t="p_canton"></span><b>.</b></h2><div class="bars" id="bdCanton"></div></div>
+
+    <div class="panel"><h2><span data-t="p_items"></span><b>.</b></h2>
+      <div class="qlegend" id="qLegend"></div>
+      <div id="itemPanels"></div>
+    </div>
+
+    <div class="panel danger"><h2><span data-t="p_danger"></span><b>.</b></h2>
+      <p class="empty" data-t="danger_note"></p>
+      <button class="toolbtn" id="delBtn" data-t="delete_all" style="border-color:var(--red);color:var(--red)"></button>
+      <div id="confirmBox" hidden class="confirmbox">
+        <p data-t="confirm_q"></p>
+        <button class="btn-danger" id="delYes" data-t="confirm_yes"></button>
+        <button class="btn-cancel" id="delNo" data-t="confirm_no"></button>
+      </div>
+      <div class="empty" id="delMsg"></div>
+    </div>
+
+    <div class="foot" id="footNote"></div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/content.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var SEGC = {1:"#e30613", 2:"#ed694b", 3:"#f6af95", 4:"#fcd9ca"};
+  var D = {
+    de: { gate_intro:"Geben Sie Survey-ID und Zugangscode ein, um die Live-Resultate zu sehen.",
+          gate_survey:"Survey-ID", gate_code:"Zugangscode", gate_open:"Dashboard öffnen",
+          gate_err_bad:"Survey-ID oder Zugangscode nicht erkannt.", gate_err_net:"Server nicht erreichbar.",
+          gate_err_nocfg:"Backend noch nicht konfiguriert (siehe DEPLOYMENT.md).", gate_err_id:"Bitte Survey-ID eingeben.", checking:"Prüfe …",
+          title:"Publikumssegmente", refresh:"Aktualisieren", download:"CSV herunterladen",
+          k_total:"Antworten insgesamt", k_last:"Letzte Antwort", k_sl:"Ø Wissensindex (0–2)", k_cert:"Ø Zuordnungssicherheit", k_dur:"Ø Dauer",
+          p_segments:"Antworten pro Segment", p_share:"Anteile", p_gender:"Segmente nach Geschlecht",
+          p_age:"Segmente nach Altersgruppe", p_edu:"Segmente nach Bildung", p_canton:"Segmente nach Kanton",
+          p_items:"Ergebnisse pro Frage", p_danger:"Daten verwalten",
+          danger_note:"Das Löschen entfernt alle Antworten dieses Surveys unwiderruflich.",
+          delete_all:"Alle Daten löschen", confirm_q:"Sind Sie sicher? Alle Antworten dieses Surveys werden unwiderruflich gelöscht.",
+          confirm_yes:"Ja, endgültig löschen", confirm_no:"Abbrechen", deleted:"{n} Antworten gelöscht.",
+          gender:{ "1":"Männlich","2":"Weiblich","3":"Divers","null":"Keine Angabe" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"Keine Angabe" },
+          edu:{ "low":"Obligatorische Schule oder weniger","mid":"Sekundarstufe II","high":"Tertiärstufe","na":"Keine Angabe" },
+          outside:"Ausserhalb CH", noanswer:"Keine Angabe", certainty:"Sicherheit", mean:"Ø", dk:"weiss nicht", missing:"übersprungen",
+          yes:"Ja", no:"Nein", newresp:"Neue Antwort", demo_items:"Beispieldaten", nodata:"Noch keine Antworten. Teilen Sie den Fragebogen-Link, um Daten zu sammeln.",
+          foot:"Segmentfarben folgen der ordinalen Typologie von Sciencephile (dunkelrot) bis Skeptische (hellrot). Instrument & Typologie: Wissenschaftsbarometer Schweiz · Universität Zürich. Der CSV-Export enthält Einzelantworten inkl. freiwilliger Kontaktangaben." },
+    fr: { gate_intro:"Saisissez l'ID du sondage et le code d'accès pour voir les résultats en direct.",
+          gate_survey:"ID du sondage", gate_code:"Code d'accès", gate_open:"Ouvrir le tableau de bord",
+          gate_err_bad:"ID du sondage ou code d'accès non reconnu.", gate_err_net:"Serveur inaccessible.",
+          gate_err_nocfg:"Backend pas encore configuré (voir DEPLOYMENT.md).", gate_err_id:"Veuillez saisir l'ID du sondage.", checking:"Vérification …",
+          title:"Segments de public", refresh:"Actualiser", download:"Télécharger CSV",
+          k_total:"Réponses au total", k_last:"Dernière réponse", k_sl:"Ø indice de connaissances (0–2)", k_cert:"Ø certitude d'attribution", k_dur:"Ø durée",
+          p_segments:"Réponses par segment", p_share:"Parts", p_gender:"Segments par sexe",
+          p_age:"Segments par groupe d'âge", p_edu:"Segments par formation", p_canton:"Segments par canton",
+          p_items:"Résultats par question", p_danger:"Gérer les données",
+          danger_note:"La suppression retire toutes les réponses de ce sondage de manière irréversible.",
+          delete_all:"Supprimer toutes les données", confirm_q:"Êtes-vous sûr ? Toutes les réponses de ce sondage seront supprimées définitivement.",
+          confirm_yes:"Oui, supprimer définitivement", confirm_no:"Annuler", deleted:"{n} réponses supprimées.",
+          gender:{ "1":"Masculin","2":"Féminin","3":"Divers","null":"Pas de réponse" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"Pas de réponse" },
+          edu:{ "low":"École obligatoire ou moins","mid":"Secondaire II","high":"Tertiaire","na":"Pas de réponse" },
+          outside:"Hors CH", noanswer:"Pas de réponse", certainty:"certitude", mean:"Ø", dk:"ne sait pas", missing:"passée",
+          yes:"Oui", no:"Non", newresp:"Nouvelle réponse", demo_items:"Données d'exemple", nodata:"Pas encore de réponses. Partagez le lien du questionnaire pour collecter des données.",
+          foot:"Les couleurs suivent la typologie ordinale, de Scientophiles (rouge foncé) à Sceptiques (rouge clair). Instrument & typologie : Baromètre scientifique suisse · Université de Zurich. L'export CSV contient les réponses individuelles, y compris les coordonnées facultatives." },
+    it: { gate_intro:"Inserisca l'ID del sondaggio e il codice d'accesso per vedere i risultati in diretta.",
+          gate_survey:"ID del sondaggio", gate_code:"Codice d'accesso", gate_open:"Apri il dashboard",
+          gate_err_bad:"ID del sondaggio o codice d'accesso non riconosciuto.", gate_err_net:"Server non raggiungibile.",
+          gate_err_nocfg:"Backend non ancora configurato (vedi DEPLOYMENT.md).", gate_err_id:"Inserisca l'ID del sondaggio.", checking:"Verifica …",
+          title:"Segmenti di pubblico", refresh:"Aggiorna", download:"Scarica CSV",
+          k_total:"Risposte totali", k_last:"Ultima risposta", k_sl:"Ø indice di conoscenza (0–2)", k_cert:"Ø certezza di attribuzione", k_dur:"Ø durata",
+          p_segments:"Risposte per segmento", p_share:"Quote", p_gender:"Segmenti per sesso",
+          p_age:"Segmenti per gruppo d'età", p_edu:"Segmenti per formazione", p_canton:"Segmenti per Cantone",
+          p_items:"Risultati per domanda", p_danger:"Gestione dei dati",
+          danger_note:"L'eliminazione rimuove tutte le risposte di questo sondaggio in modo irreversibile.",
+          delete_all:"Elimina tutti i dati", confirm_q:"È sicuro/a? Tutte le risposte di questo sondaggio saranno eliminate definitivamente.",
+          confirm_yes:"Sì, elimina definitivamente", confirm_no:"Annulla", deleted:"{n} risposte eliminate.",
+          gender:{ "1":"Maschile","2":"Femminile","3":"Altro","null":"Nessuna risposta" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"Nessuna risposta" },
+          edu:{ "low":"Scuola dell'obbligo o meno","mid":"Secondario II","high":"Terziario","na":"Nessuna risposta" },
+          outside:"Fuori CH", noanswer:"Nessuna risposta", certainty:"certezza", mean:"Ø", dk:"non so", missing:"saltata",
+          yes:"Sì", no:"No", newresp:"Nuova risposta", demo_items:"Dati di esempio", nodata:"Ancora nessuna risposta. Condivida il link del questionario per raccogliere dati.",
+          foot:"I colori seguono la tipologia ordinale, da Sciencephile (rosso scuro) a Scettici (rosso chiaro). Strumento & tipologia: Barometro scientifico svizzero · Università di Zurigo. L'esportazione CSV contiene le risposte individuali, inclusi i dati di contatto facoltativi." },
+    en: { gate_intro:"Enter your survey ID and access code to view live results.",
+          gate_survey:"Survey ID", gate_code:"Access code", gate_open:"Open dashboard",
+          gate_err_bad:"Survey ID or access code not recognised.", gate_err_net:"Could not reach the server.",
+          gate_err_nocfg:"Backend not configured yet (see DEPLOYMENT.md).", gate_err_id:"Please enter a survey ID.", checking:"Checking …",
+          title:"Audience segments", refresh:"Refresh", download:"Download CSV",
+          k_total:"Total responses", k_last:"Last response", k_sl:"Avg. knowledge index (0–2)", k_cert:"Avg. assignment certainty", k_dur:"Avg. duration",
+          p_segments:"Responses per segment", p_share:"Share", p_gender:"Segments by gender",
+          p_age:"Segments by age group", p_edu:"Segments by education", p_canton:"Segments by canton",
+          p_items:"Results per question", p_danger:"Manage data",
+          danger_note:"Deleting removes all responses of this survey irreversibly.",
+          delete_all:"Delete all data", confirm_q:"Are you sure? All responses of this survey will be deleted permanently.",
+          confirm_yes:"Yes, delete permanently", confirm_no:"Cancel", deleted:"{n} responses deleted.",
+          gender:{ "1":"Male","2":"Female","3":"Other","null":"No answer" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"No answer" },
+          edu:{ "low":"Compulsory school or less","mid":"Upper secondary","high":"Tertiary","na":"No answer" },
+          outside:"Outside CH", noanswer:"No answer", certainty:"certainty", mean:"Ø", dk:"don't know", missing:"skipped",
+          yes:"Yes", no:"No", newresp:"New response", demo_items:"Sample data", nodata:"No responses yet. Share the questionnaire link to start collecting data.",
+          foot:"Segment colours follow the ordinal typology from Sciencephiles (dark red) to Skeptics (light red). Instrument & typology: Science Barometer Switzerland · University of Zurich. The CSV export contains individual responses including voluntary contact details." }
+  };
+
+  var lang = "de", curData = null, isDemo = false;
+  var _cfg = (typeof CONFIG !== "undefined" && CONFIG) ? CONFIG : { SUPABASE_URL:"", SUPABASE_ANON_KEY:"" };
+  var sb = null, surveyId = null, accessCode = null;
+  try {
+    if (_cfg.SUPABASE_URL && _cfg.SUPABASE_URL.indexOf("YOUR-PROJECT") === -1 && window.supabase)
+      sb = window.supabase.createClient(_cfg.SUPABASE_URL, _cfg.SUPABASE_ANON_KEY);
+  } catch(e){}
+
+  function T(){ return D[lang]; }
+  function fillS(s,m){ return s.replace(/\{(\w+)\}/g,function(_,k){return m[k];}); }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+  function applyStatic(){
+    document.documentElement.lang = lang;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-t]"), function(el){
+      var k = el.getAttribute("data-t");
+      if(T()[k]) el.textContent = T()[k];
+    });
+    document.getElementById("footNote").textContent = T().foot;
+  }
+  document.getElementById("langbar").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    lang = b.getAttribute("data-lang");
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
+      x.setAttribute("aria-pressed", x===b?"true":"false");
+    });
+    applyStatic();
+    if(curData) render(curData);
+  });
+
+  var gate = document.getElementById("gate");
+  var app = document.getElementById("app");
+  var params = new URLSearchParams(location.search);
+  if(params.get("survey")) document.getElementById("gSurvey").value = params.get("survey");
+
+  /* ---------- demo mode ---------- */
+  if(params.get("demo")==="1"){
+    isDemo = true;
+    gate.hidden = true; app.hidden = false;
+    document.getElementById("liveText").textContent = "Demo";
+    document.getElementById("csvBtn").disabled = true;
+    document.getElementById("delBtn").disabled = true;
+    var demo = makeDemo();
+    curData = demo;
+    applyStatic(); render(demo);
+    document.getElementById("surveyTag").textContent = "demo-survey ("+T().demo_items+")";
+    document.getElementById("refreshBtn").onclick = function(){ render(demo); };
+  } else {
+    applyStatic();
+    document.getElementById("gEnter").onclick = enter;
+    document.getElementById("gCode").addEventListener("keydown", function(e){ if(e.key==="Enter") enter(); });
+  }
+
+  function makeDemo(){
+    var dist = [];
+    QUESTIONS.forEach(function(q){
+      var vals = q.type==="know4" ? [1,2,3,4] : q.type==="scale7" ? [1,2,3,4,5,6,7] :
+                 q.type==="yesno" ? [1,2] : (q.type==="scale5" ? [1,2,3,4,5] : null);
+      if(!vals) return;
+      vals.forEach(function(v){ dist.push({k:q.id, v:String(v), c: 4+Math.floor(Math.random()*22)}); });
+      dist.push({k:q.id, v:"98", c: 2+Math.floor(Math.random()*5)});
+      dist.push({k:q.id, v:null, c: Math.floor(Math.random()*3)});
+    });
+    return {
+      total: 148, last_response_at: new Date(Date.now()-4*60000).toISOString(),
+      segments: {"1":47,"2":33,"3":41,"4":27},
+      avg_idx_sl: 1.24, avg_duration_sec: 372, avg_certainty: 0.83,
+      certainty_by_segment: {"1":0.88,"2":0.79,"3":0.81,"4":0.85},
+      segment_by_gender: [
+        {gender:1,segment:1,c:19},{gender:1,segment:2,c:18},{gender:1,segment:3,c:20},{gender:1,segment:4,c:14},
+        {gender:2,segment:1,c:26},{gender:2,segment:2,c:14},{gender:2,segment:3,c:19},{gender:2,segment:4,c:12},
+        {gender:3,segment:1,c:2},{gender:3,segment:2,c:1},{gender:3,segment:3,c:2},{gender:3,segment:4,c:1}],
+      segment_by_age: [
+        {grp:"15-34",segment:1,c:18},{grp:"15-34",segment:2,c:12},{grp:"15-34",segment:3,c:11},{grp:"15-34",segment:4,c:7},
+        {grp:"35-54",segment:1,c:16},{grp:"35-54",segment:2,c:12},{grp:"35-54",segment:3,c:15},{grp:"35-54",segment:4,c:9},
+        {grp:"55+",segment:1,c:11},{grp:"55+",segment:2,c:8},{grp:"55+",segment:3,c:13},{grp:"55+",segment:4,c:9},
+        {grp:"na",segment:1,c:2},{grp:"na",segment:2,c:1},{grp:"na",segment:3,c:2},{grp:"na",segment:4,c:2}],
+      segment_by_edu: [
+        {grp:"low",segment:1,c:3},{grp:"low",segment:2,c:4},{grp:"low",segment:3,c:8},{grp:"low",segment:4,c:9},
+        {grp:"mid",segment:1,c:17},{grp:"mid",segment:2,c:15},{grp:"mid",segment:3,c:20},{grp:"mid",segment:4,c:12},
+        {grp:"high",segment:1,c:25},{grp:"high",segment:2,c:13},{grp:"high",segment:3,c:11},{grp:"high",segment:4,c:4},
+        {grp:"na",segment:1,c:2},{grp:"na",segment:2,c:1},{grp:"na",segment:3,c:2},{grp:"na",segment:4,c:2}],
+      segment_by_canton: [
+        {grp:"ZH",segment:1,c:16},{grp:"ZH",segment:2,c:9},{grp:"ZH",segment:3,c:11},{grp:"ZH",segment:4,c:6},
+        {grp:"BE",segment:1,c:8},{grp:"BE",segment:2,c:6},{grp:"BE",segment:3,c:8},{grp:"BE",segment:4,c:5},
+        {grp:"AG",segment:1,c:6},{grp:"AG",segment:2,c:5},{grp:"AG",segment:3,c:6},{grp:"AG",segment:4,c:4},
+        {grp:"TI",segment:1,c:4},{grp:"TI",segment:2,c:3},{grp:"TI",segment:3,c:4},{grp:"TI",segment:4,c:3},
+        {grp:"EXT",segment:1,c:5},{grp:"EXT",segment:2,c:4},{grp:"EXT",segment:3,c:4},{grp:"EXT",segment:4,c:3},
+        {grp:"na",segment:1,c:3},{grp:"na",segment:2,c:2},{grp:"na",segment:3,c:3},{grp:"na",segment:4,c:3}],
+      item_dist: dist
+    };
+  }
+
+  function enter(){
+    var err = document.getElementById("gateErr");
+    surveyId = document.getElementById("gSurvey").value.trim();
+    var code = document.getElementById("gCode").value;
+    if(!surveyId){ err.textContent = T().gate_err_id; return; }
+    if(!sb){ err.textContent = T().gate_err_nocfg; return; }
+    err.textContent = T().checking;
+    sb.rpc("survey_summary_secured", {p_survey_id: surveyId, p_code: code}).then(function(res){
+      if(res.error || res.data === null || res.data === false){ err.textContent = T().gate_err_bad; return; }
+      gate.hidden = true; app.hidden = false;
+      document.getElementById("surveyTag").textContent = surveyId;
+      accessCode = code;
+      curData = res.data; render(res.data);
+      document.getElementById("refreshBtn").onclick = load;
+      document.getElementById("csvBtn").onclick = downloadCsv;
+      wireDelete();
+      try {
+        sb.channel("resp-"+surveyId)
+          .on("postgres_changes", {event:"INSERT", schema:"public", table:"responses", filter:"survey_id=eq."+surveyId},
+              function(){ load(); flashLive(); })
+          .subscribe();
+      } catch(e){}
+      setInterval(load, 15000);
+    }).catch(function(){ err.textContent = T().gate_err_net; });
+  }
+  function flashLive(){
+    var t = document.getElementById("liveText");
+    t.textContent = T().newresp; setTimeout(function(){ t.textContent = "Live"; }, 2500);
+  }
+  function load(){
+    sb.rpc("survey_summary_secured", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+      if(!res.error && res.data){ curData = res.data; render(res.data); }
+    });
+  }
+
+  /* ---------- rendering ---------- */
+  function segName(s){ return SEGMENT_NAMES[s][lang]; }
+
+  function render(d){
+    var total = d.total || 0;
+    var segs = d.segments || {};
+    var certs = d.certainty_by_segment || {};
+    var counts = [1,2,3,4].map(function(s){ return segs[String(s)] || 0; });
+    var maxc = Math.max(1, Math.max.apply(null, counts));
+
+    var lastTxt = d.last_response_at ? timeAgo(new Date(d.last_response_at)) : "—";
+    var avgMin = d.avg_duration_sec ? (Math.round(d.avg_duration_sec/6)/10)+" min" : "—";
+    var cert = d.avg_certainty != null ? Math.round(d.avg_certainty*100)+"%" : "—";
+    document.getElementById("kpis").innerHTML =
+      kpi(total, T().k_total) + kpi(lastTxt, T().k_last) + kpi(cert, T().k_cert) +
+      kpi(d.avg_idx_sl!=null?d.avg_idx_sl:"—", T().k_sl) + kpi(avgMin, T().k_dur);
+
+    if(total===0){
+      document.getElementById("segBars").innerHTML = '<div class="empty">'+esc(T().nodata)+'</div>';
+    } else {
+      document.getElementById("segBars").innerHTML = [1,2,3,4].map(function(s,i){
+        var c = counts[i], pct = total? Math.round(c/total*100):0;
+        var ct = certs[String(s)] != null ? ' · '+Math.round(certs[String(s)]*100)+'% '+T().certainty : '';
+        return '<div class="segrow">'+
+          '<div class="segname"><span class="swatch" style="background:'+SEGC[s]+'"></span>'+esc(segName(s))+'</div>'+
+          '<div class="track"><div class="trackfill" style="width:'+(c/maxc*100)+'%;background:'+SEGC[s]+'"></div></div>'+
+          '<div class="segval"><b>'+c+'</b> · '+pct+'%'+ct+'</div>'+
+        '</div>';
+      }).join("");
+    }
+
+    drawDonut(counts, total);
+    document.getElementById("donutLegend").innerHTML = [1,2,3,4].map(function(s,i){
+      var pct = total? Math.round(counts[i]/total*100):0;
+      return '<div><span class="swatch" style="background:'+SEGC[s]+'"></span>'+esc(segName(s))+' <b>'+pct+'%</b></div>';
+    }).join("");
+
+    renderBreakdown("bdGender", d.segment_by_gender || [], function(r){ return r.gender==null?"null":String(r.gender); },
+                    ["1","2","3","null"], function(g){ return T().gender[g]||g; }, false);
+    renderBreakdown("bdAge", d.segment_by_age || [], function(r){ return r.grp; },
+                    ["15-34","35-54","55+","na"], function(g){ return T().age[g]||g; }, false);
+    renderBreakdown("bdEdu", d.segment_by_edu || [], function(r){ return r.grp; },
+                    ["low","mid","high","na"], function(g){ return T().edu[g]||g; }, false);
+    renderBreakdown("bdCanton", d.segment_by_canton || [], function(r){ return r.grp; },
+                    null, function(g){ return g==="na" ? T().noanswer : (g==="EXT" ? T().outside : g); }, true);
+
+    renderItems(d.item_dist || []);
+  }
+
+  function kpi(n,l){ return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+
+  function drawDonut(counts, total){
+    var svg = document.getElementById("donut");
+    svg.innerHTML = '<circle cx="21" cy="21" r="15.9155" fill="none" stroke="#fdece3" stroke-width="6"/>';
+    if(total===0){ svg.innerHTML += '<text x="21" y="23" text-anchor="middle" font-size="6" fill="#5f5f5f">0</text>'; return; }
+    var offset = 25;
+    [1,2,3,4].forEach(function(s,i){
+      var len = counts[i]/total*100;
+      if(len<=0) return;
+      svg.innerHTML += '<circle cx="21" cy="21" r="15.9155" fill="none" stroke="'+SEGC[s]+'" stroke-width="6" stroke-dasharray="'+len+' '+(100-len)+'" stroke-dashoffset="'+offset+'"/>';
+      offset -= len;
+    });
+    svg.innerHTML += '<text x="21" y="20.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d1d1d" font-family="Bebas Neue">'+total+'</text>'+
+                     '<text x="21" y="26" text-anchor="middle" font-size="3" fill="#5f5f5f">total</text>';
+  }
+
+  function renderBreakdown(elId, rows, keyFn, order, labelFn, sortByTotal){
+    var byG = {};
+    rows.forEach(function(r){
+      var g = keyFn(r);
+      byG[g] = byG[g] || {total:0, seg:{1:0,2:0,3:0,4:0}};
+      byG[g].seg[r.segment] += r.c; byG[g].total += r.c;
+    });
+    var keys = order ? order.filter(function(g){ return byG[g]; }) : Object.keys(byG);
+    if(sortByTotal) keys.sort(function(a,b){
+      if(a==="na") return 1; if(b==="na") return -1;
+      return byG[b].total - byG[a].total;
+    });
+    var el = document.getElementById(elId);
+    if(keys.length===0){ el.innerHTML = '<div class="empty">'+esc(T().nodata)+'</div>'; return; }
+    el.innerHTML = keys.map(function(g){
+      var o = byG[g];
+      var stack = [1,2,3,4].map(function(s){
+        var c = o.seg[s], w = o.total? (c/o.total*100):0;
+        return w>0 ? '<span style="width:'+w+'%;background:'+SEGC[s]+'"></span>' : '';
+      }).join("");
+      return '<div class="barcol"><div class="cap">'+esc(labelFn(g))+' <span>· '+o.total+'</span></div>'+
+             '<div class="stack">'+stack+'</div></div>';
+    }).join("");
+  }
+
+  /* ---------- per-question distributions ---------- */
+  function rampColor(i, n){       // 1..n -> light..dark red
+    var stops = ["#fcd9ca","#f9c5af","#f6af95","#f3997b","#f08262","#ed694b","#e94f35","#e63323","#e30613"];
+    if(n===1) return stops[8];
+    var idx = Math.round((i-1)/(n-1)*(stops.length-1));
+    return stops[idx];
+  }
+  var GRAY_DK = "#9a9a9a", GRAY_MISS = "#dddddd";
+
+  function renderItems(dist){
+    var byItem = {};
+    dist.forEach(function(r){
+      byItem[r.k] = byItem[r.k] || {};
+      var v = (r.v === null || r.v === undefined) ? "null" : String(r.v);
+      byItem[r.k][v] = (byItem[r.k][v] || 0) + r.c;
+    });
+
+    document.getElementById("qLegend").innerHTML =
+      '<span><i style="background:#fcd9ca"></i>1 → <i style="background:#e30613"></i>max</span>'+
+      '<span><i style="background:'+GRAY_DK+'"></i>'+esc(T().dk)+'</span>'+
+      '<span><i style="background:'+GRAY_MISS+'"></i>'+esc(T().missing)+'</span>';
+
+    var html = "";
+    PAGES.forEach(function(pg){
+      var qs = pg.items.map(function(id){ return QUESTIONS.filter(function(q){return q.id===id;})[0]; })
+        .filter(function(q){ return q && ["scale5","scale7","know4","yesno"].indexOf(q.type) !== -1; });
+      if(qs.length===0) return;
+      html += '<h3>'+esc(pg.title[lang])+'</h3>';
+      qs.forEach(function(q){
+        var counts = byItem[q.id] || {};
+        var n = q.type==="scale7" ? 7 : q.type==="know4" ? 4 : q.type==="yesno" ? 2 : 5;
+        var totalAll = 0, valid = 0, sum = 0;
+        Object.keys(counts).forEach(function(v){ totalAll += counts[v]; });
+        var segs = "";
+        for(var i=1;i<=n;i++){
+          var c = counts[String(i)] || 0;
+          valid += c; sum += i*c;
+          if(c>0 && totalAll>0) segs += '<span style="width:'+(c/totalAll*100)+'%;background:'+rampColor(i,n)+'" title="'+i+': '+c+'"></span>';
+        }
+        var dk = counts["98"] || 0;
+        if(dk>0 && totalAll>0) segs += '<span style="width:'+(dk/totalAll*100)+'%;background:'+GRAY_DK+'"></span>';
+        var miss = counts["null"] || 0;
+        if(miss>0 && totalAll>0) segs += '<span style="width:'+(miss/totalAll*100)+'%;background:'+GRAY_MISS+'"></span>';
+        var meta = totalAll===0 ? "—" :
+          (q.type==="yesno"
+            ? (valid>0 ? Math.round((counts["1"]||0)/valid*100)+'% '+T().yes : "—") + ' · n='+totalAll
+            : (valid>0 ? T().mean+' '+(Math.round(sum/valid*100)/100) : "—") + ' · n='+totalAll);
+        html += '<div class="qrow"><div class="qt">'+esc(q.text[lang])+'</div>'+
+                '<div class="qstack">'+segs+'</div>'+
+                '<div class="qmeta">'+meta+'</div></div>';
+      });
+    });
+    document.getElementById("itemPanels").innerHTML = html || '<div class="empty">'+esc(T().nodata)+'</div>';
+  }
+
+  /* ---------- CSV export ---------- */
+  function downloadCsv(){
+    if(!sb || !surveyId) return;
+    sb.rpc("survey_export_secured", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+      if(res.error || !res.data) return;
+      var rows = res.data;
+      var itemIds = QUESTIONS.map(function(q){ return q.id; });
+      var base = ["id","created_at","survey_id","language","segment","segment_label",
+                  "prob_sciencephiles","prob_critically_interested","prob_passive_supporters","prob_disengaged",
+                  "idx_sl","n_missing","age_year","gender","education","canton","duration_sec","contact_type"];
+      var contactCols = ["email","first","last","street","city"];
+      var header = base.concat(itemIds.map(function(i){ return "ans_"+i; }))
+                       .concat(contactCols.map(function(c){ return "contact_"+c; }));
+      var lines = [header.join(",")];
+      rows.forEach(function(r){
+        var vals = base.map(function(k){ return csvCell(r[k]); });
+        var a = r.answers || {};
+        itemIds.forEach(function(i){ vals.push(csvCell(a[i])); });
+        var ct = r.contact || {};
+        contactCols.forEach(function(c){ vals.push(csvCell(ct[c])); });
+        lines.push(vals.join(","));
+      });
+      var blob = new Blob(["\uFEFF"+lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "responses_"+surveyId+"_"+new Date().toISOString().slice(0,10)+".csv";
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    });
+  }
+  function csvCell(v){
+    if(v === null || v === undefined) return "";
+    var s = String(v);
+    if(/[",\n\r;]/.test(s)) s = '"'+s.replace(/"/g,'""')+'"';
+    return s;
+  }
+
+  /* ---------- delete with confirmation ---------- */
+  function wireDelete(){
+    var box = document.getElementById("confirmBox");
+    var msg = document.getElementById("delMsg");
+    document.getElementById("delBtn").onclick = function(){ box.hidden = false; msg.textContent = ""; };
+    document.getElementById("delNo").onclick = function(){ box.hidden = true; };
+    document.getElementById("delYes").onclick = function(){
+      box.hidden = true;
+      sb.rpc("survey_delete_secured", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+        if(res.error || res.data === null){ msg.textContent = T().gate_err_net; return; }
+        msg.textContent = fillS(T().deleted, {n: res.data});
+        load();
+      });
+    };
+  }
+
+  function timeAgo(dt){
+    var s = Math.round((Date.now()-dt.getTime())/1000);
+    if(s<60) return s+"s"; if(s<3600) return Math.round(s/60)+"m";
+    if(s<86400) return Math.round(s/3600)+"h"; return Math.round(s/86400)+"d";
+  }
+})();
+</script>
+</body>
+</html>

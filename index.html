@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wissenschaftsbarometer — Fragebogen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@font-face{
+  font-family:"Akkurat Pro";
+  src:url("fonts/AkkuratPro-Regular.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+:root{
+  --red:#e30613; --red-90:#e63323; --red-70:#ed694b; --red-40:#f6af95; --red-20:#fcd9ca; --red-10:#fdece3;
+  --ink:#1d1d1d; --ink-60:#5f5f5f; --line:#e2e2e2; --white:#ffffff;
+  --btn:44px; --gap:8px; --knw:86px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Akkurat Pro","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--white);
+  -webkit-font-smoothing:antialiased;font-size:16px;line-height:1.45}
+.wrap{max-width:880px;margin:0 auto;padding:20px 20px 90px;min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:16px;border-bottom:3px solid var(--ink)}
+.logo{height:40px;display:block}
+.langbar{display:flex;gap:0;border:2px solid var(--ink)}
+.langbar button{border:0;background:var(--white);font:inherit;font-size:13px;font-weight:700;color:var(--ink);padding:6px 11px;cursor:pointer;transition:.15s}
+.langbar button + button{border-left:2px solid var(--ink)}
+.langbar button[aria-pressed="true"]{background:var(--ink);color:var(--white)}
+
+.progress{margin:18px 0 6px}
+.eyebrow{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em;color:var(--red);display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.eyebrow .pageof{font-size:15px;color:var(--ink-60);font-family:"Akkurat Pro","Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:400;letter-spacing:0}
+.bar{height:6px;background:var(--red-20);margin-top:8px}
+.bar span{display:block;height:100%;width:0;background:var(--red);transition:width .4s ease}
+
+main{flex:1;display:flex;flex-direction:column}
+.page{animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.intro{font-size:16px;line-height:1.5;margin:20px 0 6px;max-width:700px}
+
+/* grid header — sticky so anchors stay visible while scrolling batteries */
+.ghead{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-top:14px;
+  position:sticky;top:0;background:var(--white);z-index:5;padding-top:6px}
+.ghead .gspacer{min-height:1px}
+.gcols{display:grid;gap:var(--gap);font-size:11px;line-height:1.25;color:var(--ink-60);text-align:center;padding-bottom:6px}
+.gcols.c5{grid-template-columns:repeat(6,var(--btn))}
+.gcols.c7{grid-template-columns:repeat(8,var(--btn))}
+.gcols.know4{grid-template-columns:repeat(4,var(--knw)) var(--btn)}
+.gcols .glab{align-self:end}
+.gcols .glab b{color:var(--ink);font-size:13px;display:block}
+.mob-legend{display:none;font-size:13px;color:var(--ink-60);margin:8px 0 2px}
+.mob-legend b{color:var(--ink)}
+
+.item{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:13px 0;border-top:1px solid var(--line)}
+.items .item:first-of-type{border-top:2px solid var(--ink)}
+.item.warn{background:var(--red-10)}
+.item.hiddenq{display:none}
+.itext{font-weight:700;margin:0;font-size:15.5px;line-height:1.4}
+.scalerow{display:grid;gap:var(--gap)}
+.scalerow.c5{grid-template-columns:repeat(6,var(--btn))}
+.scalerow.c7{grid-template-columns:repeat(8,var(--btn))}
+.scalerow.know4{grid-template-columns:repeat(4,var(--knw)) var(--btn)}
+.sbtn{font:inherit;font-weight:700;border:2px solid var(--ink);background:var(--white);color:var(--ink);cursor:pointer;transition:.12s;display:flex;align-items:center;justify-content:center;height:var(--btn);padding:0}
+.sbtn:hover{background:var(--red-20)}
+.sbtn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--white)}
+.sbtn .mark{width:10px;height:10px;border:2px solid currentColor;border-radius:50%}
+.sbtn[aria-pressed="true"] .mark{background:var(--white);border-color:var(--white)}
+.sbtn.dk{border-style:dashed;color:var(--ink-60);font-size:16px}
+.sbtn.dk[aria-pressed="true"]{color:var(--white);border-style:solid}
+.sbtn .klab{display:none;font-weight:400;font-size:13px;line-height:1.2;padding:6px}
+
+/* per-item inline header (religiosity / left-right on the About page) */
+.inlinehead .gcols{padding-bottom:4px;margin-top:2px}
+
+/* demographics / yes-no / contact */
+.item.stack{grid-template-columns:1fr;gap:10px;align-items:start;padding:16px 0}
+.dwrap{display:flex;flex-wrap:wrap;gap:8px}
+.dbtn{font:inherit;font-size:14px;border:2px solid var(--ink);background:var(--white);color:var(--ink);cursor:pointer;padding:10px 18px;transition:.12s;text-align:left}
+.dbtn:hover{background:var(--red-20)}
+.dbtn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--white);font-weight:700}
+.dbtn.ka{border-style:dashed;color:var(--ink-60)}
+.dbtn.ka[aria-pressed="true"]{color:var(--white);border-style:solid}
+.year-input{width:170px;font:inherit;font-size:19px;font-weight:700;padding:11px 14px;border:2px solid var(--ink);color:var(--ink);letter-spacing:2px}
+.year-input:focus{outline:none;border-color:var(--red)}
+select{font:inherit;font-size:15px;padding:11px 12px;border:2px solid var(--ink);background:var(--white);color:var(--ink);max-width:100%;width:460px}
+select:focus{outline:none;border-color:var(--red)}
+.cfield{margin:10px 0;max-width:460px}
+.cfield label{display:block;font-size:12.5px;font-weight:700;margin-bottom:5px}
+.cfield input{width:100%;font:inherit;font-size:15px;padding:11px 12px;border:2px solid var(--ink)}
+.cfield input:focus{outline:none;border-color:var(--red)}
+
+.hint{font-size:14px;color:var(--red);margin-top:16px;min-height:20px;font-weight:700}
+.hint a{color:var(--red);cursor:pointer;text-decoration:underline;font-weight:400}
+.nav{display:flex;gap:14px;margin-top:14px;justify-content:flex-end}
+.btn{font:inherit;font-weight:700;font-size:16px;padding:14px 0;width:180px;cursor:pointer;border:2px solid var(--ink);transition:.15s;letter-spacing:.02em;text-align:center}
+.btn-primary{background:var(--red);color:var(--white);border-color:var(--red)}
+.btn-primary:hover{background:var(--red-90);border-color:var(--red-90)}
+.btn-ghost{background:var(--white);color:var(--ink)}
+.btn-ghost:hover{background:var(--line)}
+
+.hero-sub{font-size:22px;font-weight:700;margin:36px 0 18px;max-width:680px;line-height:1.4}
+.privacy{font-size:14px;line-height:1.55;border-left:6px solid var(--red);padding:4px 0 4px 16px;margin-bottom:28px;max-width:640px;color:var(--ink-60)}
+.result{margin-top:34px}
+.result h2{font-family:"Bebas Neue",sans-serif;font-size:44px;line-height:1;letter-spacing:.02em;margin:0 0 14px}
+.result .seg{font-family:"Bebas Neue",sans-serif;font-size:50px;line-height:1;color:var(--red);margin:12px 0 14px}
+.result p{max-width:600px}
+.savenote{font-size:14px;color:var(--ink-60)}
+.foot{margin-top:auto;padding-top:34px;font-size:12px;color:var(--ink-60);line-height:1.5;border-top:1px solid var(--line)}
+
+@media (max-width:680px){
+  .item{grid-template-columns:1fr;gap:10px}
+  .ghead{grid-template-columns:1fr}
+  .ghead .gspacer{display:none}
+  .ghead .gcols.know4{display:none}
+  .mob-legend.know{display:block}
+  .scalerow.know4{display:flex;flex-wrap:wrap}
+  .scalerow.know4 .sbtn.kn{flex:1 1 44%;height:auto;min-height:42px}
+  .scalerow.know4 .sbtn.kn .klab{display:block}
+  .scalerow.know4 .sbtn.kn .mark{display:none}
+  .scalerow.know4 .sbtn.dk{flex:0 0 44px;height:auto;min-height:42px}
+  :root{--btn:40px;--gap:5px}
+  .nav .btn{width:50%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <img class="logo" src="img/logo.png" alt="Wissenschaftsbarometer · Baromètre scientifique · Barometro scientifico">
+    <div class="langbar" id="langbar" role="group" aria-label="Language">
+      <button data-lang="de" aria-pressed="true">DE</button>
+      <button data-lang="fr" aria-pressed="false">FR</button>
+      <button data-lang="it" aria-pressed="false">IT</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div class="progress" id="progressWrap" hidden>
+    <div class="eyebrow"><span id="pageTitle"></span><span class="pageof" id="pageOf"></span></div>
+    <div class="bar"><span id="barFill"></span></div>
+  </div>
+
+  <main id="stage"></main>
+
+  <div class="foot">
+    Instrument &amp; Typologie: Wissenschaftsbarometer Schweiz · Universität Zürich.
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/content.js"></script>
+<script src="js/scoring.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var lang = "de";
+  var page = -1;
+  var answers = {};
+  var contact = { type: undefined, email: "", first: "", last: "", street: "", city: "" };
+  var startedAt = Date.now();
+
+  var _cfg = (typeof CONFIG !== "undefined" && CONFIG) ? CONFIG :
+             { SUPABASE_URL: "", SUPABASE_ANON_KEY: "", SURVEY_ID: "demo-survey" };
+  var _params = new URLSearchParams(location.search);
+  var SURVEY = _params.get("c") || _cfg.SURVEY_ID;
+  if (LANGS.indexOf(_params.get("lang")) !== -1) lang = _params.get("lang");
+
+  var sb = null;
+  try {
+    if (_cfg.SUPABASE_URL && _cfg.SUPABASE_URL.indexOf("YOUR-PROJECT") === -1 && window.supabase) {
+      sb = window.supabase.createClient(_cfg.SUPABASE_URL, _cfg.SUPABASE_ANON_KEY);
+    }
+  } catch(e){ sb = null; }
+
+  var Q = {};
+  QUESTIONS.forEach(function(q){ Q[q.id] = q; });
+
+  /* per-session randomized item order (stable across back/forward) */
+  var pageOrder = {};
+  PAGES.forEach(function(pg){
+    var items = pg.items.slice();
+    if(pg.randomize){
+      var pin = pg.pinFirst || null;
+      var rest = items.filter(function(i){ return i !== pin; });
+      for(var i = rest.length-1; i > 0; i--){
+        var j = Math.floor(Math.random()*(i+1));
+        var tmp = rest[i]; rest[i] = rest[j]; rest[j] = tmp;
+      }
+      items = pin ? [pin].concat(rest) : rest;
+    }
+    pageOrder[pg.key] = items;
+  });
+
+  var stage = document.getElementById("stage");
+  function t(k){ return UI[lang][k]; }
+  function fill(s, m){ return s.replace(/\{(\w+)\}/g, function(_, k){ return m[k]; }); }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+  document.getElementById("langbar").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    lang = b.getAttribute("data-lang");
+    syncLang(); render();
+  });
+  function syncLang(){
+    document.documentElement.lang = lang;
+    Array.prototype.forEach.call(document.querySelectorAll("#langbar button"), function(x){
+      x.setAttribute("aria-pressed", x.getAttribute("data-lang")===lang ? "true":"false");
+    });
+  }
+
+  function setProgress(){
+    var w = document.getElementById("progressWrap");
+    if(page < 0 || page >= PAGES.length){ w.hidden = true; return; }
+    w.hidden = false;
+    document.getElementById("pageTitle").textContent = PAGES[page].title[lang];
+    document.getElementById("pageOf").textContent = fill(t("page_of"), {n: page+1, total: PAGES.length});
+    document.getElementById("barFill").style.width = ((page+1)/PAGES.length*100)+"%";
+  }
+
+  function render(){
+    setProgress();
+    if(page === -1) return renderStart();
+    if(page >= PAGES.length) return renderEnd();
+    var pg = PAGES[page];
+    if(pg.key === "contact") return renderContact(pg);
+    renderPage(pg);
+  }
+
+  function renderStart(){
+    stage.innerHTML =
+      '<div class="page">'+
+        '<h1 class="hero-sub">'+esc(t("start_sub"))+'</h1>'+
+        '<div class="privacy">'+esc(t("start_intro"))+'</div>'+
+        '<div class="nav" style="justify-content:flex-start"><button class="btn btn-primary" id="go" style="width:auto;padding:14px 26px">'+esc(t("start_button"))+'</button></div>'+
+      '</div>';
+    document.getElementById("go").onclick = function(){ page = 0; startedAt = Date.now(); render(); };
+  }
+
+  /* header cells: number on top, anchor label beneath cols 1 and max */
+  function scaleHeadCells(n, ends, dkLabel){
+    var cells = "";
+    for(var i=1;i<=n;i++){
+      var label = i===1 ? esc(ends[0]) : (i===n ? esc(ends[1]) : "");
+      cells += '<span class="glab"><b>'+i+'</b>'+label+'</span>';
+    }
+    cells += '<span class="glab">'+esc(dkLabel)+'</span>';
+    return cells;
+  }
+  function gridHead(pg){
+    var first = Q[pageOrder[pg.key][0]];
+    if(first.type === "scale5" || first.type === "scale7"){
+      var n = first.type === "scale7" ? 7 : 5;
+      var ends = SCALES[first.scale][lang];
+      var dk = first.dkna ? t("dont_know_na") : t("dont_know");
+      return '<div class="ghead"><div class="gspacer"></div>'+
+        '<div class="gcols '+(n===7?"c7":"c5")+'">'+scaleHeadCells(n, ends, dk)+'</div></div>';
+    }
+    if(first.type === "know4"){
+      var labels = KNOW_SCALE[lang];
+      var cells = labels.map(function(l){ return '<span class="glab">'+esc(l)+'</span>'; }).join("");
+      return '<div class="ghead"><div class="gspacer"></div>'+
+        '<div class="gcols know4">'+cells+'<span class="glab">'+esc(t("dont_know"))+'</span></div></div>'+
+        '<div class="mob-legend know"><b>?</b> = '+esc(t("dont_know"))+'</div>';
+    }
+    return '';
+  }
+  function inlineHead(q){
+    var n = q.type === "scale7" ? 7 : 5;
+    var ends = SCALES[q.scale][lang];
+    var dk = q.dkna ? t("dont_know_na") : t("dont_know");
+    return '<div class="inlinehead"><div class="gcols '+(n===7?"c7":"c5")+'">'+scaleHeadCells(n, ends, dk)+'</div></div>';
+  }
+
+  function renderPage(pg){
+    var order = pageOrder[pg.key];
+    var isAbout = pg.key === "about";
+    var isConn = pg.key === "connection";
+    var html = '<div class="page">';
+    html += '<p class="intro">'+esc(pg.intro[lang])+'</p>';
+    if(!isAbout && !isConn) html += gridHead(pg);
+    html += '<div class="items">';
+    order.forEach(function(id){
+      var q = Q[id];
+      if((q.type === "scale5" || q.type === "scale7") && !isAbout){
+        html += '<div class="item" data-id="'+id+'">'+
+                '<p class="itext">'+esc(q.text[lang])+'</p>'+scaleRow(q)+'</div>';
+      } else if(q.type === "know4"){
+        html += '<div class="item" data-id="'+id+'">'+
+                '<p class="itext">'+esc(q.text[lang])+'</p>'+know4Row(q)+'</div>';
+      } else if(q.type === "yesno"){
+        var hidden = (id !== "SC_SELF" && answers.SC_SELF === 1) ? " hiddenq" : "";
+        html += '<div class="item stack'+hidden+'" data-id="'+id+'">'+
+                '<p class="itext">'+esc(q.text[lang])+'</p>'+yesnoRow(q)+'</div>';
+      } else {
+        html += '<div class="item stack" data-id="'+id+'">'+
+                '<p class="itext">'+esc(q.text[lang])+'</p>';
+        if(q.type === "age") html += ageRow();
+        else if(q.type === "gender") html += choiceRow(q, q.options[lang]);
+        else if(q.type === "education") html += selectRow(q, q.options[lang].map(function(o,i){ return {v:i+1, label:o}; }));
+        else if(q.type === "canton") html += cantonRow();
+        else if(q.type === "scale5" || q.type === "scale7") html += inlineHead(q) + scaleRow(q);
+        html += '</div>';
+      }
+    });
+    html += '</div>';
+    html += '<div class="hint" id="hint"></div>';
+    html += navHtml(false);
+    html += '</div>';
+    stage.innerHTML = html;
+    wirePage(pg, isAbout);
+    window.scrollTo(0,0);
+  }
+
+  function navHtml(isLast){
+    var h = '<div class="nav">';
+    if(page > 0) h += '<button class="btn btn-ghost" id="back">'+esc(t("back"))+'</button>';
+    h += '<button class="btn btn-primary" id="next">'+esc(isLast ? t("submit") : t("next"))+'</button>';
+    h += '</div>';
+    return h;
+  }
+
+  function pressed(id, v){ return answers[id]===v ? ' aria-pressed="true"' : ' aria-pressed="false"'; }
+
+  function scaleRow(q){
+    var n = q.type === "scale7" ? 7 : 5;
+    var h = '<div class="scalerow '+(n===7?"c7":"c5")+'" role="group">';
+    for(var i=1;i<=n;i++)
+      h += '<button class="sbtn" data-val="'+i+'" aria-label="'+i+'"'+pressed(q.id,i)+'><span class="mark"></span></button>';
+    var dk = q.dkna ? t("dont_know_na") : t("dont_know");
+    h += '<button class="sbtn dk" data-val="98" aria-label="'+esc(dk)+'"'+pressed(q.id,98)+'>?</button>';
+    h += '</div>';
+    return h;
+  }
+  function know4Row(q){
+    var labels = KNOW_SCALE[lang];
+    var h = '<div class="scalerow know4" role="group">';
+    for(var i=1;i<=4;i++){
+      h += '<button class="sbtn kn" data-val="'+i+'" aria-label="'+esc(labels[i-1])+'"'+pressed(q.id,i)+'>'+
+           '<span class="mark"></span><span class="klab">'+esc(labels[i-1])+'</span></button>';
+    }
+    h += '<button class="sbtn dk" data-val="98" aria-label="'+esc(t("dont_know"))+'"'+pressed(q.id,98)+'>?</button>';
+    h += '</div>';
+    return h;
+  }
+  function yesnoRow(q){
+    return '<div class="dwrap" role="group">'+
+      '<button class="dbtn" data-val="1"'+pressed(q.id,1)+'>'+esc(t("yes"))+'</button>'+
+      '<button class="dbtn" data-val="2"'+pressed(q.id,2)+'>'+esc(t("no"))+'</button>'+
+      '<button class="dbtn ka" data-val="98"'+pressed(q.id,98)+'>'+esc(t("no_answer"))+'</button>'+
+    '</div>';
+  }
+  function choiceRow(q, opts){
+    var h = '<div class="dwrap" role="group">';
+    opts.forEach(function(o,i){ h += '<button class="dbtn" data-val="'+(i+1)+'"'+pressed(q.id,i+1)+'>'+esc(o)+'</button>'; });
+    h += '</div>';
+    return h;
+  }
+  function selectRow(q, opts){
+    var h = '<select data-select="'+q.id+'"><option value="">'+esc(t("select_placeholder"))+'</option>';
+    opts.forEach(function(o){
+      var sel = String(answers[q.id])===String(o.v) ? ' selected' : '';
+      h += '<option value="'+o.v+'"'+sel+'>'+esc(o.label)+'</option>';
+    });
+    h += '</select>';
+    return h;
+  }
+  function cantonRow(){
+    var li = {de:1, fr:2, it:3, en:4}[lang];
+    var opts = CANTONS.map(function(c){ return {v:c[0], label:c[li]}; })
+      .sort(function(a,b){ return a.label.localeCompare(b.label, lang); });
+    opts.push({v: CANTON_OUTSIDE.code, label: CANTON_OUTSIDE[lang]});
+    return selectRow(Q.canton, opts);
+  }
+
+  function applyScFilter(){
+    var hide = answers.SC_SELF === 1;
+    ["SC_KNOW","SC_JOB","SC_FAM"].forEach(function(id){
+      var el = stage.querySelector('.item[data-id="'+id+'"]');
+      if(!el) return;
+      el.classList.toggle("hiddenq", hide);
+      if(hide) answers[id] = null;                    // filtered = not asked
+      else if(answers[id] === null) delete answers[id];
+    });
+  }
+
+  function wirePage(pg, isAbout){
+    var hint = document.getElementById("hint");
+    Array.prototype.forEach.call(stage.querySelectorAll(".item"), function(itemEl){
+      var id = itemEl.getAttribute("data-id");
+      Array.prototype.forEach.call(itemEl.querySelectorAll(".sbtn,.dbtn"), function(btn){
+        btn.onclick = function(){
+          answers[id] = parseInt(btn.getAttribute("data-val"),10);
+          Array.prototype.forEach.call(itemEl.querySelectorAll(".sbtn,.dbtn"), function(b){ b.setAttribute("aria-pressed","false"); });
+          btn.setAttribute("aria-pressed","true");
+          itemEl.classList.remove("warn");
+          hint.innerHTML = "";
+          if(id === "SC_SELF") applyScFilter();
+        };
+      });
+      var sel = itemEl.querySelector("select");
+      if(sel){
+        sel.onchange = function(){
+          var v = sel.value;
+          if(v === "") { delete answers[id]; }
+          else answers[id] = (id === "canton") ? v : parseInt(v,10);
+          itemEl.classList.remove("warn");
+        };
+      }
+      var yi = itemEl.querySelector("#yearInput");
+      if(yi){
+        yi.oninput = function(){
+          yi.value = yi.value.replace(/\D/g,"").slice(0,4);
+          if(yi.value) answers.age = yi.value; else delete answers.age;
+          itemEl.classList.remove("warn");
+        };
+      }
+    });
+    if(pg.key === "connection") applyScFilter();
+
+    var back = document.getElementById("back");
+    if(back) back.onclick = function(){ page--; render(); };
+
+    var confirmedProceed = false;
+    document.getElementById("next").onclick = function(){
+      var visible = pageOrder[pg.key].filter(function(id){
+        var el = stage.querySelector('.item[data-id="'+id+'"]');
+        return el && !el.classList.contains("hiddenq");
+      });
+      var open = visible.filter(function(id){ return answers[id] === undefined; });
+      var soft = isAbout || pg.key === "connection";
+      if(open.length > 0 && !confirmedProceed && !soft){
+        open.forEach(function(id){ stage.querySelector('.item[data-id="'+id+'"]').classList.add("warn"); });
+        hint.innerHTML = esc(fill(t("unanswered"), {n: open.length})) +
+          ' &nbsp;<a id="anyway">'+esc(t("proceed_anyway"))+'</a>';
+        document.getElementById("anyway").onclick = function(){
+          open.forEach(function(id){ answers[id] = null; });
+          advance();
+        };
+        confirmedProceed = true;
+        return;
+      }
+      visible.forEach(function(id){ if(answers[id] === undefined) answers[id] = null; });
+      advance();
+    };
+  }
+
+  function advance(){ page++; render(); }
+
+  function ageRow(){
+    var v = answers.age || "";
+    return '<div class="dwrap"><input class="year-input" id="yearInput" inputmode="numeric" maxlength="4" placeholder="1990" value="'+esc(v)+'"></div>';
+  }
+
+  /* ---- contact page ---- */
+  function renderContact(pg){
+    var opts = CONTACT.options[lang];
+    var html = '<div class="page">';
+    html += '<p class="intro">'+esc(CONTACT.intro[lang])+'</p>';
+    html += '<div class="dwrap" id="cOpts" style="flex-direction:column;align-items:flex-start;margin-top:10px">';
+    opts.forEach(function(o,i){
+      var sel = contact.type===(i+1) ? ' aria-pressed="true"':' aria-pressed="false"';
+      html += '<button class="dbtn" data-val="'+(i+1)+'"'+sel+'>'+esc(o)+'</button>';
+    });
+    html += '</div>';
+    html += '<div id="cFields"></div>';
+    html += '<div class="hint" id="hint"></div>';
+    html += navHtml(true);
+    html += '</div>';
+    stage.innerHTML = html;
+
+    function fields(){
+      var el = document.getElementById("cFields");
+      if(contact.type === 1){
+        el.innerHTML = '<div class="cfield"><label>'+esc(t("contact_email_q"))+'</label>'+
+          '<input type="email" id="cEmail" autocomplete="email" value="'+esc(contact.email)+'"></div>';
+        document.getElementById("cEmail").oninput = function(){ contact.email = this.value; };
+      } else if(contact.type === 2){
+        el.innerHTML = '<p class="itext" style="margin-top:14px">'+esc(t("contact_post_q"))+'</p>'+
+          cf("cFirst","contact_first",contact.first)+cf("cLast","contact_last",contact.last)+
+          cf("cStreet","contact_street",contact.street)+cf("cCity","contact_city",contact.city);
+        [["cFirst","first"],["cLast","last"],["cStreet","street"],["cCity","city"]].forEach(function(p){
+          document.getElementById(p[0]).oninput = function(){ contact[p[1]] = this.value; };
+        });
+      } else {
+        el.innerHTML = "";
+      }
+    }
+    function cf(id,labelKey,val){
+      return '<div class="cfield"><label>'+esc(t(labelKey))+'</label><input id="'+id+'" value="'+esc(val)+'"></div>';
+    }
+    fields();
+
+    Array.prototype.forEach.call(document.querySelectorAll("#cOpts .dbtn"), function(btn){
+      btn.onclick = function(){
+        contact.type = parseInt(btn.getAttribute("data-val"),10);
+        Array.prototype.forEach.call(document.querySelectorAll("#cOpts .dbtn"), function(b){ b.setAttribute("aria-pressed","false"); });
+        btn.setAttribute("aria-pressed","true");
+        fields();
+      };
+    });
+    var back = document.getElementById("back");
+    if(back) back.onclick = function(){ page--; render(); };
+    document.getElementById("next").onclick = function(){ page++; render(); };
+    window.scrollTo(0,0);
+  }
+
+  /* ---- submit + result ---- */
+  function renderEnd(){
+    var scored = classify(answers);
+    stage.innerHTML =
+      '<div class="page result">'+
+        '<h2>'+esc(t("thanks_title"))+'</h2>'+
+        '<p class="savenote" id="saveState">'+esc(t("saving"))+'</p>'+
+        '<div id="revealWrap" hidden><div class="nav" style="justify-content:flex-start;margin-top:20px">'+
+          '<button class="btn btn-ghost" id="reveal" style="width:auto;padding:14px 24px">'+esc(t("show_segment"))+'</button></div></div>'+
+        '<div id="segBlock" hidden>'+
+          '<p>'+esc(t("thanks_result"))+'</p>'+
+          '<div class="seg">'+esc(SEGMENT_NAMES[scored.segment][lang])+'</div>'+
+          '<p>'+esc(SEGMENT_DESC[scored.segment][lang])+'</p>'+
+        '</div>'+
+        '<div id="errBlock" hidden>'+
+          '<p style="color:var(--red);font-weight:700">'+esc(t("thanks_error"))+'</p>'+
+          '<div class="nav" style="justify-content:flex-start"><button class="btn btn-primary" id="retry" style="width:auto;padding:14px 24px">'+esc(t("retry"))+'</button></div>'+
+        '</div>'+
+      '</div>';
+    document.getElementById("reveal").onclick = function(){
+      document.getElementById("revealWrap").hidden = true;
+      document.getElementById("segBlock").hidden = false;
+    };
+    submit(scored);
+  }
+
+  function round4(x){ return x==null?null:Math.round(x*1e4)/1e4; }
+  function contactPayload(){
+    if(contact.type === 1) return { email: contact.email || null };
+    if(contact.type === 2) return { first: contact.first || null, last: contact.last || null,
+                                    street: contact.street || null, city: contact.city || null };
+    return null;
+  }
+  function buildRow(scored){
+    return {
+      survey_id: SURVEY,
+      language: lang,
+      segment: scored.segment,
+      segment_label: SEGMENT_NAMES[scored.segment].en,
+      prob_sciencephiles: round4(scored.probabilities[1]),
+      prob_critically_interested: round4(scored.probabilities[2]),
+      prob_passive_supporters: round4(scored.probabilities[3]),
+      prob_disengaged: round4(scored.probabilities[4]),
+      idx_sl: scored.idx_SL,
+      n_missing: scored.nMissing,
+      age_year: answers.age ? parseInt(answers.age,10) : null,
+      gender: answers.gender || null,
+      education: answers.education || null,
+      canton: answers.canton || null,
+      contact_type: contact.type || null,
+      contact: contactPayload(),
+      answers: answers,
+      duration_sec: Math.round((Date.now()-startedAt)/1000)
+    };
+  }
+
+  function submit(scored){
+    var saveState = document.getElementById("saveState");
+    var revealWrap = document.getElementById("revealWrap");
+    var errBlock = document.getElementById("errBlock");
+    function showResult(){ saveState.textContent = t("thanks_sub"); revealWrap.hidden = false; }
+    function showError(){
+      saveState.textContent = "";
+      errBlock.hidden = false;
+      document.getElementById("retry").onclick = function(){
+        errBlock.hidden = true; saveState.textContent = t("saving"); submit(scored);
+      };
+    }
+    if(!sb){ setTimeout(showResult, 400); return; }
+    sb.from("responses").insert(buildRow(scored)).then(function(res){
+      if(res.error){ console.error(res.error); showError(); } else { showResult(); }
+    }).catch(function(err){ console.error(err); showError(); });
+  }
+
+  syncLang();
+  render();
+})();
+</script>
+</body>
+</html>
