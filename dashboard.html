@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wissenschaftsbarometer — Segment Monitor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@font-face{font-family:"Akkurat Pro";src:url("fonts/AkkuratPro-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+:root{
+  --red:#e30613; --red-90:#e63323; --red-70:#ed694b; --red-40:#f6af95; --red-20:#fcd9ca; --red-10:#fdece3;
+  --ink:#1d1d1d; --ink-60:#5f5f5f; --line:#e2e2e2; --white:#fff;
+  --s1:#e30613; --s2:#ed694b; --s3:#f6af95; --s4:#fcd9ca;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Akkurat Pro","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--white);font-size:15px}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 22px 80px}
+.brandbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:14px;border-bottom:3px solid var(--ink);margin-bottom:20px}
+.brandbar img{height:36px;display:block}
+.langbar{display:flex;border:2px solid var(--ink)}
+.langbar button{border:0;background:var(--white);font:inherit;font-size:12px;font-weight:700;color:var(--ink);padding:5px 10px;cursor:pointer}
+.langbar button + button{border-left:2px solid var(--ink)}
+.langbar button[aria-pressed="true"]{background:var(--ink);color:var(--white)}
+
+.gate{max-width:420px;margin:8vh auto;border:2px solid var(--ink);padding:32px 30px}
+.gate h1{font-family:"Bebas Neue",sans-serif;font-size:38px;letter-spacing:.03em;margin:0 0 4px}
+.gate h1 b{color:var(--red)}
+.gate p{color:var(--ink-60);font-size:14px;margin:0 0 20px;line-height:1.5}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.field input{width:100%;font:inherit;font-size:15px;padding:11px 13px;border:2px solid var(--ink)}
+.field input:focus{outline:none;border-color:var(--red)}
+.btn{font:inherit;font-weight:700;font-size:15px;border:2px solid var(--red);padding:12px 20px;cursor:pointer;background:var(--red);color:var(--white);width:100%;transition:.15s}
+.btn:hover{background:var(--red-90);border-color:var(--red-90)}
+.gate-err{color:var(--red);font-size:13px;margin-top:10px;min-height:16px;font-weight:700}
+
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:20px}
+.title{font-family:"Bebas Neue",sans-serif;font-size:40px;line-height:1;letter-spacing:.02em}
+.title b{color:var(--red)}
+.sub{color:var(--ink-60);font-size:13px;margin-top:4px}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--red);border:2px solid var(--red);padding:5px 12px;letter-spacing:.04em;text-transform:uppercase}
+.live .pulse{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.toolbtn{background:var(--white);border:2px solid var(--ink);color:var(--ink);font:inherit;font-size:12px;font-weight:700;padding:6px 13px;cursor:pointer;letter-spacing:.04em;text-transform:uppercase}
+.toolbtn:hover{background:var(--line)}
+.toolbtn:disabled{opacity:.4;cursor:not-allowed}
+
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;border:2px solid var(--ink);margin-bottom:20px}
+.kpi{padding:16px 18px;border-right:2px solid var(--ink)}
+.kpi:last-child{border-right:0}
+.kpi .n{font-family:"Bebas Neue",sans-serif;font-size:36px;line-height:1}
+.kpi .l{font-size:11.5px;color:var(--ink-60);margin-top:4px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+@media(max-width:760px){.kpi{border-right:0;border-bottom:2px solid var(--ink)}.kpi:last-child{border-bottom:0}}
+
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:18px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.panel{border:2px solid var(--ink);padding:18px 20px;margin-bottom:18px}
+.grid .panel{margin-bottom:0}
+.panel h2{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:.03em;margin:0 0 14px}
+.panel h2 b{color:var(--red)}
+.panel h3{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);margin:20px 0 10px}
+
+.segrow{display:flex;align-items:center;gap:14px;margin-bottom:13px}
+.segrow:last-child{margin-bottom:0}
+.segname{width:170px;flex:0 0 auto;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:9px;line-height:1.2}
+.swatch{width:12px;height:12px;flex:0 0 auto;border:1px solid var(--ink)}
+.track{flex:1;height:26px;background:var(--red-10);position:relative}
+.trackfill{height:100%;transition:width .5s ease;min-width:2px;border-right:1px solid var(--ink)}
+.segval{width:150px;flex:0 0 auto;text-align:right;font-size:12.5px;color:var(--ink-60);font-variant-numeric:tabular-nums}
+.segval b{color:var(--ink);font-size:15px}
+
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut{width:150px;height:150px;flex:0 0 auto}
+.legendlist{font-size:13px}
+.legendlist div{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.legendlist b{font-variant-numeric:tabular-nums;margin-left:auto;padding-left:12px}
+
+.bars{display:flex;gap:16px;flex-wrap:wrap}
+.barcol{flex:1;min-width:130px;max-width:230px}
+.barcol .cap{font-size:12.5px;margin-bottom:7px;font-weight:700}
+.barcol .cap span{color:var(--ink-60);font-weight:400}
+.stack{display:flex;height:22px;background:var(--red-10)}
+.stack span{display:block}
+
+/* per-question distributions */
+.qrow{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1.2fr) 120px;gap:16px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.qrow .qt{font-size:13px;line-height:1.35}
+.qrow .qstack{display:flex;height:20px;background:#f4f4f4}
+.qrow .qstack span{display:block}
+.qrow .qmeta{font-size:12px;color:var(--ink-60);text-align:right;font-variant-numeric:tabular-nums}
+.qlegend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11.5px;color:var(--ink-60);margin:4px 0 8px}
+.qlegend i{display:inline-block;width:10px;height:10px;border:1px solid var(--ink);margin-right:5px;vertical-align:-1px}
+@media(max-width:680px){.qrow{grid-template-columns:1fr;gap:6px}.qrow .qmeta{text-align:left}}
+
+.danger{border-color:var(--red)}
+.danger h2{color:var(--red)}
+.confirmbox{background:var(--red-10);border:2px solid var(--red);padding:14px 16px;margin-top:12px}
+.confirmbox p{margin:0 0 12px;font-weight:700}
+.btn-danger{background:var(--red);color:#fff;border:2px solid var(--red);font:inherit;font-weight:700;padding:10px 18px;cursor:pointer;margin-right:10px}
+.btn-cancel{background:#fff;color:var(--ink);border:2px solid var(--ink);font:inherit;font-weight:700;padding:10px 18px;cursor:pointer}
+.empty{color:var(--ink-60);font-size:14px;padding:10px 0;line-height:1.5}
+.foot{margin-top:26px;font-size:12px;color:var(--ink-60);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+.sechead{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.03em;margin:48px 0 14px;border-bottom:3px solid var(--ink);padding-bottom:6px}
+#tab-results .sechead:first-child{margin-top:6px}
+.bars2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin-bottom:18px}
+.bars2 .panel{margin-bottom:0;min-width:0}
+.settings-sep{border:0;border-top:2px solid var(--ink);margin:34px 0 26px}
+.sechead b{color:var(--red)}
+.bars3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:18px}
+.bars3 .panel{margin-bottom:0}
+.distrow{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-width:0}
+.distrow .dl{width:150px;flex:0 0 auto;font-size:12px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.distrow .dtrack{flex:1 1 0;min-width:0;height:20px;display:flex;overflow:hidden}
+.distrow .dtrack span{display:block;height:100%}
+.distrow .dv{width:86px;flex:0 0 auto;text-align:right;font-size:12px;color:var(--ink-60);font-variant-numeric:tabular-nums}
+.distrow .dv b{color:var(--ink)}
+.pbar{position:relative;flex:1;height:20px}
+.pbar span{position:absolute;left:0;top:0;bottom:0}
+.stack .pl,.qstack .pl,.dtrack .pl{font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;height:100%;text-align:center}
+.stack .pl.dk1,.qstack .pl.dk1{color:var(--ink)}
+.meanrow{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.meanrow .ml{width:230px;flex:0 0 auto;font-size:12.5px;font-weight:700;line-height:1.3}
+.meanrow .ml span{color:var(--ink-60);font-weight:400}
+.meanrow .mbars{flex:1;min-width:260px;display:flex;flex-direction:column;gap:4px}
+.mbar{display:flex;align-items:center;gap:8px}
+.mbar .sn{width:150px;flex:0 0 auto;font-size:11px;display:flex;align-items:center;gap:6px}
+.mbar .mtrack{flex:1;height:14px;position:relative}
+.mbar .mtrack i{display:block;height:100%}
+.mbar .mv{width:40px;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums;font-weight:700}
+.dq-page{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-60);margin:12px 0 6px}
+.dq-item{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);padding:6px 11px;margin:0 6px 6px 0;font-size:12.5px;cursor:pointer;user-select:none}
+.dq-item input{accent-color:var(--red)}
+.dq-item.locked{opacity:.55;cursor:not-allowed;border-style:dashed}
+.txt-row{display:grid;grid-template-columns:34px 1fr;gap:8px;margin-bottom:6px;align-items:start}
+.txt-row .lg{font-size:11px;font-weight:700;color:var(--ink-60);padding-top:9px}
+.txt-row textarea{font:inherit;font-size:13px;padding:8px 9px;border:1.5px solid var(--line);width:100%;min-height:40px;resize:vertical}
+.txt-row textarea:focus{outline:none;border-color:var(--red)}
+.txt-kind{font-size:12.5px;font-weight:700;margin:12px 0 6px}
+.pub-item{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);padding:7px 12px;margin:0 6px 6px 0;font-size:13px;cursor:pointer;user-select:none}
+.pub-item input{accent-color:var(--red)}
+.tabs{display:flex;gap:0;border:2px solid var(--ink);margin-bottom:20px;flex-wrap:wrap}
+.tabs button{border:0;background:var(--white);font:inherit;font-size:13px;font-weight:700;color:var(--ink);padding:11px 20px;cursor:pointer;letter-spacing:.03em;text-transform:uppercase}
+.tabs button + button{border-left:2px solid var(--ink)}
+.tabs button[aria-pressed="true"]{background:var(--red);color:var(--white)}
+.set-row{display:grid;grid-template-columns:210px 1fr;gap:16px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+.set-row:first-of-type{border-top:0}
+.set-row .sl{font-weight:700;font-size:13.5px;padding-top:6px}
+.iopt{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);padding:9px 14px;margin:0 8px 8px 0;cursor:pointer;font-size:13.5px;background:var(--white)}
+.iopt[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+.iopt[disabled]{opacity:.45;cursor:not-allowed}
+.iopt small{font-weight:400}
+input[type="color"]{width:56px;height:36px;border:2px solid var(--ink);padding:2px;background:#fff;cursor:pointer}
+.cfg-note{font-size:12px;color:var(--ink-60);margin-top:6px;line-height:1.45}
+.cq{border:1px solid var(--line);padding:12px 14px;margin-bottom:12px}
+.cq-head{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.cq-head select{width:auto;font:inherit;font-size:13px;padding:7px 8px;border:2px solid var(--ink)}
+.cq-langrow{display:grid;grid-template-columns:34px 1fr 150px 150px;gap:8px;margin-bottom:6px;align-items:center}
+.cq-langrow .lg{font-size:11px;font-weight:700;color:var(--ink-60)}
+.cq-langrow input{font:inherit;font-size:13px;padding:8px 9px;border:1.5px solid var(--line);width:100%}
+.cq-langrow input:focus{outline:none;border-color:var(--red)}
+.minibtn{background:#fff;border:1.5px solid var(--ink);font:inherit;font-size:11.5px;font-weight:700;padding:5px 10px;cursor:pointer;margin-left:6px}
+.minibtn:hover{background:var(--line)}
+.savebar{margin-top:14px;display:flex;gap:12px;align-items:center}
+.okmsg{color:#1f7a3d;font-weight:700;font-size:13px}
+.sharelink{font-family:monospace;font-size:12px;background:#f6f6f6;border:1px solid var(--line);padding:8px 10px;word-break:break-all;margin:8px 0;display:block}
+@media(max-width:680px){.set-row{grid-template-columns:1fr}.cq-langrow{grid-template-columns:30px 1fr}.cq-langrow input:nth-child(n+3){grid-column:2}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brandbar">
+    <img src="img/logo.png" alt="Wissenschaftsbarometer">
+    <div class="langbar" id="langbar">
+      <button data-lang="de" aria-pressed="true">DE</button>
+      <button data-lang="fr" aria-pressed="false">FR</button>
+      <button data-lang="it" aria-pressed="false">IT</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div id="gate" class="gate">
+    <h1>Segment<b>.</b>Monitor</h1>
+    <p data-t="gate_intro"></p>
+    <div class="field"><label data-t="gate_survey"></label><input id="gSurvey" placeholder="museum-basel-2026" autocomplete="off"></div>
+    <div class="field"><label data-t="gate_code"></label><input id="gCode" type="password" placeholder="••••••••" autocomplete="off"></div>
+    <button class="btn" id="gEnter" data-t="gate_open"></button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+
+  <div id="app" hidden>
+    <div class="head">
+      <div>
+        <div class="title"><span data-t="title"></span><b>.</b></div>
+        <div class="sub" id="surveyTag"></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="toolbtn" id="pdfBtn" data-t="download_pdf"></button>
+        <button class="toolbtn" id="csvBtn" data-t="download"></button>
+        <button class="toolbtn" id="refreshBtn" data-t="refresh"></button>
+        <span class="live"><span class="pulse"></span><span id="liveText">Live</span></span>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button data-tab="results" aria-pressed="true" data-t="tab_results"></button>
+      <button data-tab="settings" aria-pressed="false" data-t="tab_settings"></button>
+      <button data-tab="public" aria-pressed="false" data-t="tab_public"></button>
+      <button data-tab="consent" aria-pressed="false" data-t="tab_consent"></button>
+    </div>
+
+    <div id="tab-results">
+    <h2 class="sechead"><span data-t="sec_overview"></span><b>.</b></h2>
+    <div class="strip" id="kpis"></div>
+    <div class="bars3">
+      <div class="panel"><h2><span data-t="p_agedist"></span><b>.</b></h2><div id="ovAge"></div></div>
+      <div class="panel"><h2><span data-t="p_genderdist"></span><b>.</b></h2><div id="ovGender"></div></div>
+      <div class="panel"><h2><span data-t="p_edudist"></span><b>.</b></h2><div id="ovEdu"></div></div>
+    </div>
+
+    <h2 class="sechead"><span data-t="sec_segments"></span><b>.</b></h2>
+    <div class="panel"><h2><span data-t="p_segments"></span><b>.</b></h2><div id="segBars"></div></div>
+    <div class="bars2">
+      <div class="panel"><h2><span data-t="p_seg_age"></span><b>.</b></h2><div id="sgAge"></div></div>
+      <div class="panel"><h2><span data-t="p_seg_gender"></span><b>.</b></h2><div id="sgGender"></div></div>
+    </div>
+    <div class="bars2">
+      <div class="panel"><h2><span data-t="p_seg_edu"></span><b>.</b></h2><div id="sgEdu"></div></div>
+      <div class="panel"><h2><span data-t="p_seg_region"></span><b>.</b></h2><div id="sgRegion"></div></div>
+    </div>
+    <div class="panel"><h2><span data-t="p_seg_means"></span><b>.</b></h2><div id="sgMeans"></div></div>
+
+    <h2 class="sechead"><span data-t="sec_items"></span><b>.</b></h2>
+    <div class="panel">
+      <div class="qlegend" id="qLegend"></div>
+      <div id="itemPanels"></div>
+    </div>
+
+    </div><!-- /tab-results -->
+
+    <div id="tab-settings" hidden>
+      <div class="panel"><h2><span data-t="p_instrument"></span><b>.</b></h2>
+        <div id="instRow"></div>
+        <div class="cfg-note" data-t="inst_note"></div>
+      </div>
+      <div class="panel"><h2><span data-t="p_defaultq"></span><b>.</b></h2>
+        <div class="cfg-note" data-t="dq_note" style="margin-bottom:10px"></div>
+        <div id="dqList"></div>
+      </div>
+      <div class="panel"><h2><span data-t="p_customq"></span><b>.</b></h2>
+        <div class="cfg-note" data-t="cq_note" style="margin-bottom:12px"></div>
+        <div id="cqList"></div>
+        <button class="toolbtn" id="cqAdd" data-t="cq_add"></button>
+      </div>
+      <div class="panel"><h2><span data-t="p_texts"></span><b>.</b></h2>
+        <div class="cfg-note" data-t="texts_note" style="margin-bottom:10px"></div>
+        <div id="textsEditor"></div>
+      </div>
+      <div class="panel"><h2><span data-t="p_branding"></span><b>.</b></h2>
+        <div class="set-row"><div class="sl" data-t="s_color"></div>
+          <div><input type="color" id="cfgColor" value="#e30613">
+               <button class="minibtn" id="colorReset" data-t="s_reset"></button>
+               <div class="cfg-note" data-t="color_note"></div></div></div>
+        <div class="set-row"><div class="sl" data-t="s_logo"></div>
+          <div><input type="file" id="cfgLogo" accept="image/png,image/jpeg,image/svg+xml">
+               <button class="minibtn" id="logoRemove" data-t="s_remove"></button>
+               <div id="logoPrev" style="margin-top:8px"></div>
+               <div class="cfg-note" data-t="logo_note"></div></div></div>
+      </div>
+      <div class="panel"><h2><span data-t="p_word"></span><b>.</b></h2>
+        <div class="cfg-note" data-t="word_note" style="margin-bottom:10px"></div>
+        <select id="wordLang" style="width:auto;margin-right:10px">
+          <option value="de">Deutsch</option><option value="fr">Français</option>
+          <option value="it">Italiano</option><option value="en">English</option>
+        </select>
+        <button class="toolbtn" id="wordExport" data-t="word_btn"></button>
+      </div>
+      <div class="savebar">
+        <button class="btn" id="cfgSave" style="width:auto;padding:12px 26px" data-t="s_save"></button>
+        <span class="okmsg" id="cfgMsg"></span>
+      </div>
+
+      <hr class="settings-sep">
+
+    <div class="panel danger"><h2><span data-t="p_danger"></span><b>.</b></h2>
+      <p class="empty" data-t="danger_note"></p>
+      <button class="toolbtn" id="delBtn" data-t="delete_all" style="border-color:var(--red);color:var(--red)"></button>
+      <div id="confirmBox" hidden class="confirmbox">
+        <p data-t="confirm_q"></p>
+        <button class="btn-danger" id="delYes" data-t="confirm_yes"></button>
+        <button class="btn-cancel" id="delNo" data-t="confirm_no"></button>
+      </div>
+      <div class="empty" id="delMsg"></div>
+    </div>
+
+    </div><!-- /tab-settings -->
+
+    <div id="tab-public" hidden>
+      <div class="panel"><h2><span data-t="p_share"></span><b>.</b></h2>
+        <div class="cfg-note" data-t="share_note"></div>
+        <div id="shareBox" style="margin-top:10px"></div>
+      </div>
+      <div class="panel"><h2><span data-t="p_pubpanels"></span><b>.</b></h2>
+        <div class="cfg-note" data-t="pubpanels_note" style="margin-bottom:10px"></div>
+        <div id="pubPanels"></div>
+        <div class="savebar">
+          <button class="btn" id="pubSave" style="width:auto;padding:12px 26px" data-t="s_save"></button>
+          <span class="okmsg" id="pubMsg"></span>
+        </div>
+      </div>
+    </div><!-- /tab-public -->
+
+    <div id="tab-consent" hidden>
+      <div class="panel"><h2><span data-t="p_consent"></span><b>.</b></h2>
+        <p style="line-height:1.55;font-size:14.5px" data-t="consent_text"></p>
+        <p style="font-weight:700" id="consentState"></p>
+        <div class="savebar">
+          <button class="btn" id="consentGrant" style="width:auto;padding:12px 24px" data-t="c_grant"></button>
+          <button class="toolbtn" id="consentRevoke" data-t="c_revoke"></button>
+          <span class="okmsg" id="consentMsg"></span>
+        </div>
+      </div>
+    </div><!-- /tab-consent -->
+
+    <div class="foot" id="footNote"></div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/content.js"></script>
+<script src="js/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var SEGC = {1:"#e30613", 2:"#ed694b", 3:"#f6af95", 4:"#fcd9ca"};
+  var KEYCOLOR = "#e30613";
+  var REGION_OF = {AG:"de_reg",AI:"de_reg",AR:"de_reg",BE:"de_reg",BL:"de_reg",BS:"de_reg",GL:"de_reg",GR:"de_reg",
+    LU:"de_reg",NW:"de_reg",OW:"de_reg",SG:"de_reg",SH:"de_reg",SO:"de_reg",SZ:"de_reg",TG:"de_reg",UR:"de_reg",ZG:"de_reg",ZH:"de_reg",
+    FR:"fr_reg",GE:"fr_reg",JU:"fr_reg",NE:"fr_reg",VD:"fr_reg",VS:"fr_reg", TI:"it_reg", EXT:"ext"};
+  function mixWhite(hex,pct){
+    var m=/^#?([0-9a-f]{6})$/i.exec(hex); if(!m) return hex;
+    var n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+    function c(x){return Math.round(x+(255-x)*pct);}
+    return "#"+((1<<24)+(c(r)<<16)+(c(g)<<8)+c(b)).toString(16).slice(1);
+  }
+  function applyTheme(color){
+    KEYCOLOR = (color && /^#?[0-9a-f]{6}$/i.test(color)) ? (color.charAt(0)==="#"?color:"#"+color) : "#e30613";
+    var rs = document.documentElement.style;
+    rs.setProperty("--red", KEYCOLOR);
+    rs.setProperty("--red-90", mixWhite(KEYCOLOR,0.10));
+    rs.setProperty("--red-70", mixWhite(KEYCOLOR,0.35));
+    rs.setProperty("--red-40", mixWhite(KEYCOLOR,0.65));
+    rs.setProperty("--red-20", mixWhite(KEYCOLOR,0.80));
+    rs.setProperty("--red-10", mixWhite(KEYCOLOR,0.92));
+    SEGC[1] = KEYCOLOR;
+    SEGC[2] = mixWhite(KEYCOLOR,0.35);
+    SEGC[3] = mixWhite(KEYCOLOR,0.65);
+    SEGC[4] = mixWhite(KEYCOLOR,0.82);
+  }
+  var D = {
+    de: { gate_intro:"Geben Sie Survey-ID und Zugangscode ein, um die Live-Resultate zu sehen.",
+          gate_survey:"Survey-ID", gate_code:"Zugangscode", gate_open:"Dashboard öffnen",
+          gate_err_bad:"Survey-ID oder Zugangscode nicht erkannt.", gate_err_net:"Server nicht erreichbar.",
+          gate_err_nocfg:"Backend noch nicht konfiguriert (siehe DEPLOYMENT.md).", gate_err_id:"Bitte Survey-ID eingeben.", checking:"Prüfe …",
+          title:"Publikumssegmente", refresh:"Aktualisieren", download:"Daten als CSV herunterladen", download_pdf:"Ergebnisbericht als PDF herunterladen", cq_pos_start:"Am Anfang (vor der ersten Seite)", pdf_report:"Ergebnisbericht",
+          k_total:"Antworten insgesamt", k_last:"Letzte Antwort", k_sl:"Ø Wissensindex (0–2)", k_cert:"Ø Zuordnungssicherheit", k_dur:"Ø Dauer",
+          p_segments:"Antworten pro Segment", p_share:"Anteile", p_gender:"Segmente nach Geschlecht",
+          p_age:"Segmente nach Altersgruppe", p_edu:"Segmente nach Bildung", p_canton:"Segmente nach Kanton",
+          p_items:"Ergebnisse pro Frage", p_danger:"Daten verwalten",
+          danger_note:"Das Löschen entfernt alle Antworten dieses Surveys unwiderruflich.",
+          delete_all:"Alle Daten löschen", confirm_q:"Sind Sie sicher? Alle Antworten dieses Surveys werden unwiderruflich gelöscht.",
+          confirm_yes:"Ja, endgültig löschen", confirm_no:"Abbrechen", deleted:"{n} Antworten gelöscht.",
+          gender:{ "1":"Männlich","2":"Weiblich","3":"Divers","null":"Keine Angabe" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"Keine Angabe" },
+          edu:{ "low":"Obligatorische Schule oder weniger","mid":"Sekundarstufe II","high":"Tertiärstufe","na":"Keine Angabe" },
+          outside:"Ausserhalb CH", noanswer:"Keine Angabe", certainty:"Sicherheit", mean:"Ø", dk:"weiss nicht", missing:"übersprungen",
+          yes:"Ja", no:"Nein", newresp:"Neue Antwort", demo_items:"Beispieldaten", nodata:"Noch keine Antworten. Teilen Sie den Fragebogen-Link, um Daten zu sammeln.",
+          tab_results:"Resultate", tab_settings:"Einstellungen", tab_consent:"Datenfreigabe",
+          p_instrument:"Segmentierungs-Instrument", inst_note:"Das 10-Item- und das 1-Item-Instrument werden freigeschaltet, sobald die Klassifikationsunterlagen integriert sind. Ein Wechsel wirkt nur auf neue Antworten; jedes gespeicherte Interview enthält das verwendete Instrument.",
+          inst20:"20 Items (Standard)", inst10:"10 Items (Kurzform)", inst1:"1 Item (Screener)",
+          p_branding:"Erscheinungsbild", s_color:"Schlüsselfarbe", s_reset:"Zurücksetzen", color_note:"Wird für Buttons, Fortschrittsbalken und Auswahlen im Fragebogen verwendet; hellere Töne werden automatisch abgeleitet.",
+          s_logo:"Logo", s_remove:"Entfernen", logo_note:"PNG, JPG oder SVG, max. 300 KB. Ersetzt das Wissenschaftsbarometer-Logo im Fragebogen.",
+          p_customq:"Eigene Fragen", cq_note:"Eigene Fragen erscheinen auf einer eigenen Seite vor dem Abschluss. Sprachen ohne Text werden für diese Frage ausgeblendet. Die Antworten erscheinen unter «Ergebnisse pro Frage».",
+          cq_add:"+ Frage hinzufügen", cq_type_scale:"Skala 1–5", cq_type_yesno:"Ja / Nein", cq_type_text:"Freitext",
+          cq_anchor_l:"Label links (1)", cq_anchor_r:"Label rechts (5)", cq_up:"↑", cq_down:"↓", cq_del:"Löschen",
+          s_save:"Einstellungen speichern", saved:"Gespeichert.", save_err:"Speichern fehlgeschlagen.",
+          p_share:"Öffentliches Dashboard", share_note:"Erzeugt einen öffentlichen Link mit Gesamtzahlen, Segmentverteilung und demografischen Aufteilungen – ohne Einzelfragen und ohne Export. Ideal für Veranstaltungen.",
+          share_on:"Öffentlichen Link erzeugen", share_regen:"Link erneuern", share_off:"Link deaktivieren", share_copy:"Kopieren", share_copied:"Kopiert!", share_active:"Aktiv", share_inactive:"Kein öffentlicher Link aktiv.",
+          p_consent:"Datenfreigabe an das Wissenschaftsbarometer",
+          consent_text:"Hiermit erklären wir uns einverstanden, dass das Team des Wissenschaftsbarometers Schweiz (Universität Zürich) die in diesem Survey erhobenen Antwortdaten in anonymisierter Form – ohne die freiwillig angegebenen Kontaktdaten – für wissenschaftliche Auswertungen und die Weiterentwicklung des Instruments nutzen darf. Diese Einwilligung kann jederzeit mit Wirkung für die Zukunft widerrufen werden.",
+          c_granted:"Freigabe erteilt am {d}.", c_notgranted:"Keine Freigabe erteilt.", c_grant:"Freigabe erteilen", c_revoke:"Freigabe widerrufen",
+          p_custom_items:"Eigene Fragen", cq_answered:"{n} Antworten", demo_disabled:"Im Demo-Modus deaktiviert.",
+          title:"Live-Ergebnisse", sec_overview:"Zusammenfassung", sec_segments:"Segmente", sec_items:"Ergebnisse pro Frage",
+          k_first:"Erste Antwort", k_median:"Median Dauer", k_age:"Ø Alter",
+          p_agedist:"Altersgruppen", p_genderdist:"Geschlecht", p_edudist:"Bildung",
+          p_seg_age:"Altersgruppen pro Segment", p_seg_gender:"Geschlecht pro Segment", p_seg_edu:"Bildung pro Segment",
+          p_seg_means:"Mittelwerte pro Segment", p_seg_region:"Sprachregion pro Segment",
+          m_trust:"Vertrauen in die Wissenschaft (1–5)", m_interest:"Interesse an Wissenschaft (1–5)",
+          m_pol:"Politische Einstellung (1 links – 7 rechts)", m_rel:"Religiosität (1–5)", m_lit:"Wissensindex (0–2)",
+          reg:{de_reg:"Deutschschweiz", fr_reg:"Romandie", it_reg:"Italienische Schweiz", ext:"Ausserhalb CH", na:"Keine Angabe"},
+          tab_public:"Öffentliches Dashboard",
+          p_defaultq:"Standardfragen", dq_note:"Wählen Sie ab, welche Standardfragen gestellt werden. Fragen der Segmentierung (gestrichelt) sind fix und können nicht deaktiviert werden.",
+          dq_contact:"Kontaktfrage (Folgestudie)", dq_locked:"Teil der Segmentierung",
+          p_texts:"Eigene Texte", texts_note:"Eigener Titel, Einleitungs- und Abschlusstext. Leere Felder und Sprachen ohne Text verwenden den Standardtext.",
+          t_intro_title:"Titel (Startseite)", t_intro_text:"Einleitungstext (Startseite)", t_outro_text:"Abschlusstext (Dankesseite)",
+          p_word:"Fragebogen exportieren", word_note:"Erzeugt ein Word-Dokument des Fragebogens in der gewählten Sprache – mit allen aktiven Standardfragen, Ihren eigenen Fragen an ihren Positionen sowie Ihren Texten.",
+          word_btn:"Als Word exportieren",
+          p_pubpanels:"Angezeigte Resultate", pubpanels_note:"Wählen Sie, welche Resultate im öffentlichen Dashboard erscheinen. Die Segmentverteilung wird immer angezeigt.",
+          pub_age:"Altersgruppen pro Segment", pub_gender:"Geschlecht pro Segment", pub_edu:"Bildung pro Segment",
+          pub_means:"Mittelwerte pro Segment", pub_region:"Sprachregion pro Segment",
+          cq_type_scale7:"Skala 1–7", cq_type_dd:"Auswahlliste", cq_intro_ph:"Einleitung (optional)", cq_opts_ph:"Optionen – eine pro Zeile",
+          cq_pos:"Position: nach Seite",
+          foot:"Segmentfarben folgen der ordinalen Typologie von Sciencephile (dunkelste Abstufung der Schlüsselfarbe) bis Skeptische (hellste Abstufung). Instrument & Typologie: Wissenschaftsbarometer Schweiz · Universität Zürich. Der CSV-Export enthält Einzelantworten inkl. freiwilliger Kontaktangaben." },
+    fr: { gate_intro:"Saisissez l'ID du sondage et le code d'accès pour voir les résultats en direct.",
+          gate_survey:"ID du sondage", gate_code:"Code d'accès", gate_open:"Ouvrir le tableau de bord",
+          gate_err_bad:"ID du sondage ou code d'accès non reconnu.", gate_err_net:"Serveur inaccessible.",
+          gate_err_nocfg:"Backend pas encore configuré (voir DEPLOYMENT.md).", gate_err_id:"Veuillez saisir l'ID du sondage.", checking:"Vérification …",
+          title:"Segments de public", refresh:"Actualiser", download:"Télécharger les données en CSV", download_pdf:"Télécharger le rapport de résultats en PDF", cq_pos_start:"Au début (avant la première page)", pdf_report:"Rapport de résultats",
+          k_total:"Réponses au total", k_last:"Dernière réponse", k_sl:"Ø indice de connaissances (0–2)", k_cert:"Ø certitude d'attribution", k_dur:"Ø durée",
+          p_segments:"Réponses par segment", p_share:"Parts", p_gender:"Segments par sexe",
+          p_age:"Segments par groupe d'âge", p_edu:"Segments par formation", p_canton:"Segments par canton",
+          p_items:"Résultats par question", p_danger:"Gérer les données",
+          danger_note:"La suppression retire toutes les réponses de ce sondage de manière irréversible.",
+          delete_all:"Supprimer toutes les données", confirm_q:"Êtes-vous sûr ? Toutes les réponses de ce sondage seront supprimées définitivement.",
+          confirm_yes:"Oui, supprimer définitivement", confirm_no:"Annuler", deleted:"{n} réponses supprimées.",
+          gender:{ "1":"Masculin","2":"Féminin","3":"Divers","null":"Pas de réponse" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"Pas de réponse" },
+          edu:{ "low":"École obligatoire ou moins","mid":"Secondaire II","high":"Tertiaire","na":"Pas de réponse" },
+          outside:"Hors CH", noanswer:"Pas de réponse", certainty:"certitude", mean:"Ø", dk:"ne sait pas", missing:"passée",
+          yes:"Oui", no:"Non", newresp:"Nouvelle réponse", demo_items:"Données d'exemple", nodata:"Pas encore de réponses. Partagez le lien du questionnaire pour collecter des données.",
+          tab_results:"Résultats", tab_settings:"Paramètres", tab_consent:"Partage des données",
+          p_instrument:"Instrument de segmentation", inst_note:"Les instruments à 10 items et à 1 item seront activés dès que les documents de classification seront intégrés. Un changement ne concerne que les nouvelles réponses ; chaque interview enregistrée contient l'instrument utilisé.",
+          inst20:"20 items (standard)", inst10:"10 items (version courte)", inst1:"1 item (filtre)",
+          p_branding:"Apparence", s_color:"Couleur clé", s_reset:"Réinitialiser", color_note:"Utilisée pour les boutons, la barre de progression et les sélections ; les tons plus clairs sont dérivés automatiquement.",
+          s_logo:"Logo", s_remove:"Supprimer", logo_note:"PNG, JPG ou SVG, max. 300 Ko. Remplace le logo du Baromètre scientifique dans le questionnaire.",
+          p_customq:"Vos propres questions", cq_note:"Vos questions apparaissent sur une page dédiée avant la conclusion. Les langues sans texte sont masquées pour la question. Les réponses apparaissent sous « Résultats par question ».",
+          cq_add:"+ Ajouter une question", cq_type_scale:"Échelle 1–5", cq_type_yesno:"Oui / Non", cq_type_text:"Texte libre",
+          cq_anchor_l:"Libellé gauche (1)", cq_anchor_r:"Libellé droit (5)", cq_up:"↑", cq_down:"↓", cq_del:"Supprimer",
+          s_save:"Enregistrer les paramètres", saved:"Enregistré.", save_err:"Échec de l'enregistrement.",
+          p_share:"Tableau de bord public", share_note:"Génère un lien public avec les totaux, la répartition des segments et les répartitions démographiques – sans questions individuelles ni export. Idéal pour les événements.",
+          share_on:"Générer le lien public", share_regen:"Renouveler le lien", share_off:"Désactiver le lien", share_copy:"Copier", share_copied:"Copié !", share_active:"Actif", share_inactive:"Aucun lien public actif.",
+          p_consent:"Partage des données avec le Baromètre scientifique",
+          consent_text:"Nous acceptons que l'équipe du Baromètre scientifique suisse (Université de Zurich) utilise les données de réponse collectées dans ce sondage sous forme anonymisée – sans les coordonnées facultatives – à des fins d'analyses scientifiques et de développement de l'instrument. Ce consentement peut être révoqué à tout moment avec effet pour l'avenir.",
+          c_granted:"Consentement accordé le {d}.", c_notgranted:"Aucun consentement accordé.", c_grant:"Accorder le consentement", c_revoke:"Révoquer le consentement",
+          p_custom_items:"Vos propres questions", cq_answered:"{n} réponses", demo_disabled:"Désactivé en mode démo.",
+          title:"Résultats en direct", sec_overview:"Résumé", sec_segments:"Segments", sec_items:"Résultats par question",
+          k_first:"Première réponse", k_median:"Durée médiane", k_age:"Âge moyen",
+          p_agedist:"Groupes d'âge", p_genderdist:"Sexe", p_edudist:"Formation",
+          p_seg_age:"Groupes d'âge par segment", p_seg_gender:"Sexe par segment", p_seg_edu:"Formation par segment",
+          p_seg_means:"Moyennes par segment", p_seg_region:"Région linguistique par segment",
+          m_trust:"Confiance dans la science (1–5)", m_interest:"Intérêt pour la science (1–5)",
+          m_pol:"Position politique (1 gauche – 7 droite)", m_rel:"Religiosité (1–5)", m_lit:"Indice de connaissances (0–2)",
+          reg:{de_reg:"Suisse alémanique", fr_reg:"Romandie", it_reg:"Suisse italienne", ext:"Hors CH", na:"Pas de réponse"},
+          tab_public:"Tableau de bord public",
+          p_defaultq:"Questions standard", dq_note:"Désélectionnez les questions standard à ne pas poser. Les questions de la segmentation (pointillées) sont fixes.",
+          dq_contact:"Question de contact (étude de suivi)", dq_locked:"Partie de la segmentation",
+          p_texts:"Vos textes", texts_note:"Titre, texte d'introduction et de conclusion personnalisés. Les champs vides utilisent le texte standard.",
+          t_intro_title:"Titre (page d'accueil)", t_intro_text:"Texte d'introduction (page d'accueil)", t_outro_text:"Texte de conclusion (page de remerciement)",
+          p_word:"Exporter le questionnaire", word_note:"Génère un document Word du questionnaire dans la langue choisie – avec les questions standard actives, vos questions à leurs positions et vos textes.",
+          word_btn:"Exporter en Word",
+          p_pubpanels:"Résultats affichés", pubpanels_note:"Choisissez les résultats affichés dans le tableau de bord public. La répartition des segments est toujours affichée.",
+          pub_age:"Groupes d'âge par segment", pub_gender:"Sexe par segment", pub_edu:"Formation par segment",
+          pub_means:"Moyennes par segment", pub_region:"Région linguistique par segment",
+          cq_type_scale7:"Échelle 1–7", cq_type_dd:"Liste déroulante", cq_intro_ph:"Introduction (facultatif)", cq_opts_ph:"Options – une par ligne",
+          cq_pos:"Position : après la page",
+          foot:"Les couleurs suivent la typologie ordinale, de Scientophiles (nuance la plus foncée de la couleur clé) à Sceptiques (nuance la plus claire). Instrument & typologie : Baromètre scientifique suisse · Université de Zurich. L'export CSV contient les réponses individuelles, y compris les coordonnées facultatives." },
+    it: { gate_intro:"Inserisca l'ID del sondaggio e il codice d'accesso per vedere i risultati in diretta.",
+          gate_survey:"ID del sondaggio", gate_code:"Codice d'accesso", gate_open:"Apri il dashboard",
+          gate_err_bad:"ID del sondaggio o codice d'accesso non riconosciuto.", gate_err_net:"Server non raggiungibile.",
+          gate_err_nocfg:"Backend non ancora configurato (vedi DEPLOYMENT.md).", gate_err_id:"Inserisca l'ID del sondaggio.", checking:"Verifica …",
+          title:"Segmenti di pubblico", refresh:"Aggiorna", download:"Scarica i dati in CSV", download_pdf:"Scarica il rapporto dei risultati in PDF", cq_pos_start:"All'inizio (prima della prima pagina)", pdf_report:"Rapporto dei risultati",
+          k_total:"Risposte totali", k_last:"Ultima risposta", k_sl:"Ø indice di conoscenza (0–2)", k_cert:"Ø certezza di attribuzione", k_dur:"Ø durata",
+          p_segments:"Risposte per segmento", p_share:"Quote", p_gender:"Segmenti per sesso",
+          p_age:"Segmenti per gruppo d'età", p_edu:"Segmenti per formazione", p_canton:"Segmenti per Cantone",
+          p_items:"Risultati per domanda", p_danger:"Gestione dei dati",
+          danger_note:"L'eliminazione rimuove tutte le risposte di questo sondaggio in modo irreversibile.",
+          delete_all:"Elimina tutti i dati", confirm_q:"È sicuro/a? Tutte le risposte di questo sondaggio saranno eliminate definitivamente.",
+          confirm_yes:"Sì, elimina definitivamente", confirm_no:"Annulla", deleted:"{n} risposte eliminate.",
+          gender:{ "1":"Maschile","2":"Femminile","3":"Altro","null":"Nessuna risposta" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"Nessuna risposta" },
+          edu:{ "low":"Scuola dell'obbligo o meno","mid":"Secondario II","high":"Terziario","na":"Nessuna risposta" },
+          outside:"Fuori CH", noanswer:"Nessuna risposta", certainty:"certezza", mean:"Ø", dk:"non so", missing:"saltata",
+          yes:"Sì", no:"No", newresp:"Nuova risposta", demo_items:"Dati di esempio", nodata:"Ancora nessuna risposta. Condivida il link del questionario per raccogliere dati.",
+          tab_results:"Risultati", tab_settings:"Impostazioni", tab_consent:"Condivisione dei dati",
+          p_instrument:"Strumento di segmentazione", inst_note:"Gli strumenti a 10 item e a 1 item saranno attivati non appena i documenti di classificazione saranno integrati. Un cambio vale solo per le nuove risposte; ogni intervista salvata contiene lo strumento utilizzato.",
+          inst20:"20 item (standard)", inst10:"10 item (versione breve)", inst1:"1 item (screener)",
+          p_branding:"Aspetto", s_color:"Colore chiave", s_reset:"Ripristina", color_note:"Usato per pulsanti, barra di avanzamento e selezioni; i toni più chiari sono derivati automaticamente.",
+          s_logo:"Logo", s_remove:"Rimuovi", logo_note:"PNG, JPG o SVG, max. 300 KB. Sostituisce il logo del Barometro scientifico nel questionario.",
+          p_customq:"Domande proprie", cq_note:"Le Sue domande appaiono su una pagina dedicata prima della conclusione. Le lingue senza testo sono nascoste per la domanda. Le risposte appaiono sotto «Risultati per domanda».",
+          cq_add:"+ Aggiungi domanda", cq_type_scale:"Scala 1–5", cq_type_yesno:"Sì / No", cq_type_text:"Testo libero",
+          cq_anchor_l:"Etichetta sinistra (1)", cq_anchor_r:"Etichetta destra (5)", cq_up:"↑", cq_down:"↓", cq_del:"Elimina",
+          s_save:"Salva impostazioni", saved:"Salvato.", save_err:"Salvataggio non riuscito.",
+          p_share:"Dashboard pubblico", share_note:"Genera un link pubblico con totali, distribuzione dei segmenti e ripartizioni demografiche – senza domande individuali né esportazione. Ideale per eventi.",
+          share_on:"Genera link pubblico", share_regen:"Rinnova link", share_off:"Disattiva link", share_copy:"Copia", share_copied:"Copiato!", share_active:"Attivo", share_inactive:"Nessun link pubblico attivo.",
+          p_consent:"Condivisione dei dati con il Barometro scientifico",
+          consent_text:"Accettiamo che il team del Barometro scientifico svizzero (Università di Zurigo) utilizzi i dati di risposta raccolti in questo sondaggio in forma anonimizzata – senza i dati di contatto facoltativi – per analisi scientifiche e per lo sviluppo dello strumento. Questo consenso può essere revocato in qualsiasi momento con effetto per il futuro.",
+          c_granted:"Consenso accordato il {d}.", c_notgranted:"Nessun consenso accordato.", c_grant:"Accorda il consenso", c_revoke:"Revoca il consenso",
+          p_custom_items:"Domande proprie", cq_answered:"{n} risposte", demo_disabled:"Disattivato in modalità demo.",
+          title:"Risultati in diretta", sec_overview:"Riepilogo", sec_segments:"Segmenti", sec_items:"Risultati per domanda",
+          k_first:"Prima risposta", k_median:"Durata mediana", k_age:"Età media",
+          p_agedist:"Gruppi d'età", p_genderdist:"Sesso", p_edudist:"Formazione",
+          p_seg_age:"Gruppi d'età per segmento", p_seg_gender:"Sesso per segmento", p_seg_edu:"Formazione per segmento",
+          p_seg_means:"Medie per segmento", p_seg_region:"Regione linguistica per segmento",
+          m_trust:"Fiducia nella scienza (1–5)", m_interest:"Interesse per la scienza (1–5)",
+          m_pol:"Orientamento politico (1 sinistra – 7 destra)", m_rel:"Religiosità (1–5)", m_lit:"Indice di conoscenza (0–2)",
+          reg:{de_reg:"Svizzera tedesca", fr_reg:"Romandia", it_reg:"Svizzera italiana", ext:"Fuori CH", na:"Nessuna risposta"},
+          tab_public:"Dashboard pubblico",
+          p_defaultq:"Domande standard", dq_note:"Deselezioni le domande standard da non porre. Le domande della segmentazione (tratteggiate) sono fisse.",
+          dq_contact:"Domanda di contatto (studio di follow-up)", dq_locked:"Parte della segmentazione",
+          p_texts:"I Suoi testi", texts_note:"Titolo, testo introduttivo e conclusivo personalizzati. I campi vuoti usano il testo standard.",
+          t_intro_title:"Titolo (pagina iniziale)", t_intro_text:"Testo introduttivo (pagina iniziale)", t_outro_text:"Testo conclusivo (pagina di ringraziamento)",
+          p_word:"Esporta il questionario", word_note:"Genera un documento Word del questionario nella lingua scelta – con le domande standard attive, le Sue domande alle loro posizioni e i Suoi testi.",
+          word_btn:"Esporta in Word",
+          p_pubpanels:"Risultati visualizzati", pubpanels_note:"Scelga i risultati da mostrare nel dashboard pubblico. La distribuzione dei segmenti è sempre visibile.",
+          pub_age:"Gruppi d'età per segmento", pub_gender:"Sesso per segmento", pub_edu:"Formazione per segmento",
+          pub_means:"Medie per segmento", pub_region:"Regione linguistica per segmento",
+          cq_type_scale7:"Scala 1–7", cq_type_dd:"Elenco a discesa", cq_intro_ph:"Introduzione (facoltativa)", cq_opts_ph:"Opzioni – una per riga",
+          cq_pos:"Posizione: dopo la pagina",
+          foot:"I colori seguono la tipologia ordinale, da Sciencephile (tonalità più scura del colore chiave) a Scettici (tonalità più chiara). Strumento & tipologia: Barometro scientifico svizzero · Università di Zurigo. L'esportazione CSV contiene le risposte individuali, inclusi i dati di contatto facoltativi." },
+    en: { gate_intro:"Enter your survey ID and access code to view live results.",
+          gate_survey:"Survey ID", gate_code:"Access code", gate_open:"Open dashboard",
+          gate_err_bad:"Survey ID or access code not recognised.", gate_err_net:"Could not reach the server.",
+          gate_err_nocfg:"Backend not configured yet (see DEPLOYMENT.md).", gate_err_id:"Please enter a survey ID.", checking:"Checking …",
+          title:"Audience segments", refresh:"Refresh", download:"Download data as CSV", download_pdf:"Download results report as PDF", cq_pos_start:"At the beginning (before the first page)", pdf_report:"Results report",
+          k_total:"Total responses", k_last:"Last response", k_sl:"Avg. knowledge index (0–2)", k_cert:"Avg. assignment certainty", k_dur:"Avg. duration",
+          p_segments:"Responses per segment", p_share:"Share", p_gender:"Segments by gender",
+          p_age:"Segments by age group", p_edu:"Segments by education", p_canton:"Segments by canton",
+          p_items:"Results per question", p_danger:"Manage data",
+          danger_note:"Deleting removes all responses of this survey irreversibly.",
+          delete_all:"Delete all data", confirm_q:"Are you sure? All responses of this survey will be deleted permanently.",
+          confirm_yes:"Yes, delete permanently", confirm_no:"Cancel", deleted:"{n} responses deleted.",
+          gender:{ "1":"Male","2":"Female","3":"Other","null":"No answer" },
+          age:{ "15-34":"15–34","35-54":"35–54","55+":"55+","na":"No answer" },
+          edu:{ "low":"Compulsory school or less","mid":"Upper secondary","high":"Tertiary","na":"No answer" },
+          outside:"Outside CH", noanswer:"No answer", certainty:"certainty", mean:"Ø", dk:"don't know", missing:"skipped",
+          yes:"Yes", no:"No", newresp:"New response", demo_items:"Sample data", nodata:"No responses yet. Share the questionnaire link to start collecting data.",
+          tab_results:"Results", tab_settings:"Settings", tab_consent:"Data sharing",
+          p_instrument:"Segmentation instrument", inst_note:"The 10-item and 1-item instruments will be activated once the classification materials are integrated. Switching only affects new responses; every stored interview records the instrument used.",
+          inst20:"20 items (standard)", inst10:"10 items (short form)", inst1:"1 item (screener)",
+          p_branding:"Appearance", s_color:"Key colour", s_reset:"Reset", color_note:"Used for buttons, the progress bar and selections in the questionnaire; lighter tints are derived automatically.",
+          s_logo:"Logo", s_remove:"Remove", logo_note:"PNG, JPG or SVG, max. 300 KB. Replaces the Science Barometer logo in the questionnaire.",
+          p_customq:"Your own questions", cq_note:"Your questions appear on a dedicated page before the conclusion. Languages without text are hidden for that question. Answers appear under \u201cResults per question\u201d.",
+          cq_add:"+ Add question", cq_type_scale:"Scale 1\u20135", cq_type_yesno:"Yes / No", cq_type_text:"Free text",
+          cq_anchor_l:"Left label (1)", cq_anchor_r:"Right label (5)", cq_up:"\u2191", cq_down:"\u2193", cq_del:"Delete",
+          s_save:"Save settings", saved:"Saved.", save_err:"Saving failed.",
+          p_share:"Public dashboard", share_note:"Generates a public link showing totals, the segment distribution and demographic breakdowns \u2013 no individual questions, no export. Ideal for events.",
+          share_on:"Generate public link", share_regen:"Regenerate link", share_off:"Disable link", share_copy:"Copy", share_copied:"Copied!", share_active:"Active", share_inactive:"No public link active.",
+          p_consent:"Data sharing with the Science Barometer",
+          consent_text:"We agree that the Science Barometer Switzerland team (University of Zurich) may use the response data collected in this survey in anonymised form \u2013 excluding the voluntary contact details \u2013 for scientific analyses and the further development of the instrument. This consent can be revoked at any time with effect for the future.",
+          c_granted:"Consent granted on {d}.", c_notgranted:"No consent granted.", c_grant:"Grant consent", c_revoke:"Revoke consent",
+          p_custom_items:"Your own questions", cq_answered:"{n} answers", demo_disabled:"Disabled in demo mode.",
+          title:"Live Results", sec_overview:"Summary", sec_segments:"Segments", sec_items:"Results per question",
+          k_first:"First response", k_median:"Median duration", k_age:"Mean age",
+          p_agedist:"Age groups", p_genderdist:"Gender", p_edudist:"Education",
+          p_seg_age:"Age groups per segment", p_seg_gender:"Gender per segment", p_seg_edu:"Education per segment",
+          p_seg_means:"Means per segment", p_seg_region:"Language region per segment",
+          m_trust:"Trust in science (1–5)", m_interest:"Interest in science (1–5)",
+          m_pol:"Political orientation (1 left – 7 right)", m_rel:"Religiosity (1–5)", m_lit:"Knowledge index (0–2)",
+          reg:{de_reg:"German-speaking CH", fr_reg:"French-speaking CH", it_reg:"Italian-speaking CH", ext:"Outside CH", na:"No answer"},
+          tab_public:"Public dashboard",
+          p_defaultq:"Default questions", dq_note:"Deselect default questions you do not want to ask. Segmentation questions (dashed) are fixed and cannot be disabled.",
+          dq_contact:"Contact question (follow-up study)", dq_locked:"Part of the segmentation",
+          p_texts:"Your texts", texts_note:"Custom title, introduction and closing text. Empty fields fall back to the default text.",
+          t_intro_title:"Title (start page)", t_intro_text:"Introduction text (start page)", t_outro_text:"Closing text (thank-you page)",
+          p_word:"Export questionnaire", word_note:"Generates a Word document of the questionnaire in the chosen language – with all active default questions, your own questions at their positions, and your texts.",
+          word_btn:"Export as Word",
+          p_pubpanels:"Displayed results", pubpanels_note:"Choose which results appear on the public dashboard. The segment distribution is always shown.",
+          pub_age:"Age groups per segment", pub_gender:"Gender per segment", pub_edu:"Education per segment",
+          pub_means:"Means per segment", pub_region:"Language region per segment",
+          cq_type_scale7:"Scale 1–7", cq_type_dd:"Dropdown list", cq_intro_ph:"Introduction (optional)", cq_opts_ph:"Options – one per line",
+          cq_pos:"Position: after page",
+          foot:"Segment colours follow the ordinal typology from Sciencephiles (darkest tint of the key colour) to Skeptics (lightest tint). Instrument & typology: Science Barometer Switzerland · University of Zurich. The CSV export contains individual responses including voluntary contact details." }
+  };
+
+  var lang = "de", curData = null, isDemo = false;
+  var _cfg = (typeof CONFIG !== "undefined" && CONFIG) ? CONFIG : { SUPABASE_URL:"", SUPABASE_ANON_KEY:"" };
+  var sb = null, surveyId = null, accessCode = null;
+  try {
+    if (_cfg.SUPABASE_URL && _cfg.SUPABASE_URL.indexOf("YOUR-PROJECT") === -1 && window.supabase)
+      sb = window.supabase.createClient(_cfg.SUPABASE_URL, _cfg.SUPABASE_ANON_KEY);
+  } catch(e){}
+
+  function T(){ return D[lang]; }
+  function fillS(s,m){ return s.replace(/\{(\w+)\}/g,function(_,k){return m[k];}); }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+  function applyStatic(){
+    document.documentElement.lang = lang;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-t]"), function(el){
+      var k = el.getAttribute("data-t");
+      if(T()[k]) el.textContent = T()[k];
+    });
+    document.getElementById("footNote").textContent = T().foot;
+  }
+  document.getElementById("langbar").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    lang = b.getAttribute("data-lang");
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
+      x.setAttribute("aria-pressed", x===b?"true":"false");
+    });
+    applyStatic();
+    if(curData) render(curData);
+    if(!app.hidden) renderSettings();
+  });
+
+  var gate = document.getElementById("gate");
+  var app = document.getElementById("app");
+
+  /* ---- tabs ---- */
+  document.getElementById("tabs").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    var tab = b.getAttribute("data-tab");
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
+      x.setAttribute("aria-pressed", x===b ? "true":"false");
+    });
+    ["results","settings","public","consent"].forEach(function(tname){
+      document.getElementById("tab-"+tname).hidden = (tname !== tab);
+    });
+  });
+
+  /* ---- per-survey config state (settings tab) ---- */
+  var cfgState = { instrument:"20", color:null, logo:null, custom_questions:[] };
+  var consentState = { granted:false, at:null };
+  var shareToken = null;
+
+  function renderSettings(){
+    // instrument selector (10 & 1 disabled until materials are integrated)
+    var ir = document.getElementById("instRow");
+    ir.innerHTML =
+      '<button class="iopt" data-inst="20"'+(cfgState.instrument==="20"?' aria-pressed="true"':' aria-pressed="false"')+'>'+T().inst20+'</button>'+
+      '<button class="iopt" disabled aria-pressed="false">'+T().inst10+'</button>'+
+      '<button class="iopt" disabled aria-pressed="false">'+T().inst1+'</button>';
+    ir.querySelector('[data-inst="20"]').onclick = function(){ cfgState.instrument = "20"; renderSettings(); };
+
+    document.getElementById("cfgColor").value = cfgState.color || "#e30613";
+    var prev = document.getElementById("logoPrev");
+    prev.innerHTML = cfgState.logo ? '<img src="'+cfgState.logo+'" style="max-height:44px;max-width:280px;border:1px solid var(--line);padding:4px">' : "";
+
+    var list = document.getElementById("cqList");
+    list.innerHTML = "";
+    var POSKEYS = ["start","interest","information","opinions","effects","trust","knowledge","connection","about"];
+    cfgState.custom_questions.forEach(function(cq, i){
+      var box = document.createElement("div");
+      box.className = "cq";
+      var type = cq.type || "scale5c";
+      var isScale = type==="scale5c" || type==="scale7c";
+      var isDd = type==="dropdown";
+      var typeSel = '<select data-cqtype="'+i+'">'+
+        '<option value="scale5c"'+(type==="scale5c"?" selected":"")+'>'+T().cq_type_scale+'</option>'+
+        '<option value="scale7c"'+(type==="scale7c"?" selected":"")+'>'+T().cq_type_scale7+'</option>'+
+        '<option value="yesno"'+(type==="yesno"?" selected":"")+'>'+T().cq_type_yesno+'</option>'+
+        '<option value="dropdown"'+(type==="dropdown"?" selected":"")+'>'+T().cq_type_dd+'</option>'+
+        '<option value="text"'+(type==="text"?" selected":"")+'>'+T().cq_type_text+'</option>'+
+      '</select>';
+      var posSel = '<label style="font-size:12px;font-weight:700">'+T().cq_pos+' </label><select data-cqpos="'+i+'">'+
+        POSKEYS.map(function(pk){
+          var lbl;
+          if(pk === "start"){ lbl = T().cq_pos_start; }
+          else { var pg = PAGES.filter(function(p){ return p.key===pk; })[0]; lbl = pg ? pg.title[lang] : pk; }
+          return '<option value="'+pk+'"'+((cq.pos||"about")===pk?" selected":"")+'>'+esc(lbl)+'</option>';
+        }).join("")+'</select>';
+      var rows = "";
+      ["de","fr","it","en"].forEach(function(L){
+        var txt = (cq.text && cq.text[L]) || "";
+        var itr = (cq.intro && cq.intro[L]) || "";
+        var a = (cq.anchors && cq.anchors[L]) || ["",""];
+        var opts = (cq.options && cq.options[L]) ? cq.options[L].join("\n") : "";
+        rows += '<div class="cq-langrow"><span class="lg">'+L.toUpperCase()+'</span>'+
+          '<input data-cqt="'+i+':'+L+'" placeholder="…" value="'+escAttr(txt)+'">'+
+          (isScale ? '<input data-cqa="'+i+':'+L+':0" placeholder="'+T().cq_anchor_l+'" value="'+escAttr(a[0]||"")+'">'+
+                     '<input data-cqa="'+i+':'+L+':1" placeholder="'+T().cq_anchor_r+'" value="'+escAttr(a[1]||"")+'">' : '')+
+          '</div>'+
+          '<div class="cq-langrow"><span class="lg"></span>'+
+          '<input data-cqi="'+i+':'+L+'" placeholder="'+T().cq_intro_ph+'" value="'+escAttr(itr)+'">'+
+          (isDd ? '<textarea data-cqo="'+i+':'+L+'" placeholder="'+T().cq_opts_ph+'" style="grid-column:3/5;font:inherit;font-size:12.5px;border:1.5px solid var(--line);padding:6px;min-height:52px">'+esc(opts)+'</textarea>' : '')+
+          '</div>';
+      });
+      box.innerHTML = '<div class="cq-head"><b>'+(i+1)+'.</b> '+typeSel+' '+posSel+
+        '<span style="margin-left:auto"><button class="minibtn" data-cqup="'+i+'">'+T().cq_up+'</button>'+
+        '<button class="minibtn" data-cqdn="'+i+'">'+T().cq_down+'</button>'+
+        '<button class="minibtn" data-cqdel="'+i+'">'+T().cq_del+'</button></span></div>'+rows;
+      list.appendChild(box);
+    });
+
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqtype]"), function(sel){
+      sel.onchange = function(){ cfgState.custom_questions[+sel.getAttribute("data-cqtype")].type = sel.value; renderSettings(); };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqpos]"), function(sel){
+      sel.onchange = function(){ cfgState.custom_questions[+sel.getAttribute("data-cqpos")].pos = sel.value; };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqt]"), function(inp){
+      inp.oninput = function(){
+        var p = inp.getAttribute("data-cqt").split(":");
+        var cq = cfgState.custom_questions[+p[0]];
+        cq.text = cq.text || {};
+        if(inp.value.trim()) cq.text[p[1]] = inp.value; else delete cq.text[p[1]];
+      };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqi]"), function(inp){
+      inp.oninput = function(){
+        var p = inp.getAttribute("data-cqi").split(":");
+        var cq = cfgState.custom_questions[+p[0]];
+        cq.intro = cq.intro || {};
+        if(inp.value.trim()) cq.intro[p[1]] = inp.value; else delete cq.intro[p[1]];
+      };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqo]"), function(ta){
+      ta.oninput = function(){
+        var p = ta.getAttribute("data-cqo").split(":");
+        var cq = cfgState.custom_questions[+p[0]];
+        cq.options = cq.options || {};
+        var arr = ta.value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+        if(arr.length) cq.options[p[1]] = arr; else delete cq.options[p[1]];
+      };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqa]"), function(inp){
+      inp.oninput = function(){
+        var p = inp.getAttribute("data-cqa").split(":");
+        var cq = cfgState.custom_questions[+p[0]];
+        cq.anchors = cq.anchors || {};
+        cq.anchors[p[1]] = cq.anchors[p[1]] || ["",""];
+        cq.anchors[p[1]][+p[2]] = inp.value;
+      };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqdel]"), function(btn){
+      btn.onclick = function(){ cfgState.custom_questions.splice(+btn.getAttribute("data-cqdel"),1); renderSettings(); };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqup]"), function(btn){
+      btn.onclick = function(){
+        var i = +btn.getAttribute("data-cqup"); if(i===0) return;
+        var a = cfgState.custom_questions; var t=a[i-1]; a[i-1]=a[i]; a[i]=t; renderSettings();
+      };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll("[data-cqdn]"), function(btn){
+      btn.onclick = function(){
+        var i = +btn.getAttribute("data-cqdn"); var a = cfgState.custom_questions;
+        if(i>=a.length-1) return; var t=a[i+1]; a[i+1]=a[i]; a[i]=t; renderSettings();
+      };
+    });
+
+    renderDefaultQ();
+    renderTextsEditor();
+    renderPubPanels();
+        renderShare();
+    renderConsentTab();
+  }
+  function escAttr(s){ return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+  /* --- default-question toggles (segmentation items are locked) --- */
+  function renderDefaultQ(){
+    var el = document.getElementById("dqList");
+    var off = {}; (cfgState.disabled_questions||[]).forEach(function(id){ off[id]=true; });
+    var html = "";
+    PAGES.forEach(function(pg){
+      var qs = pg.items.map(function(id){ return QUESTIONS.filter(function(q){return q.id===id;})[0]; }).filter(Boolean);
+      if(!qs.length) return;
+      html += '<div class="dq-page">'+esc(pg.title[lang])+'</div>';
+      qs.forEach(function(q){
+        var locked = !!q.seg;
+        var checked = locked || !off[q.id];
+        var label = q.text[lang] || q.id;
+        if(label.length > 70) label = label.slice(0,67)+"…";
+        html += '<label class="dq-item'+(locked?" locked":"")+'" '+(locked?'title="'+esc(T().dq_locked)+'"':'')+'>'+
+          '<input type="checkbox" data-dq="'+q.id+'"'+(checked?" checked":"")+(locked?" disabled":"")+'> '+esc(label)+'</label>';
+      });
+    });
+    html += '<div class="dq-page">'+esc(T().tab_consent)+' / '+esc(T().dq_contact)+'</div>'+
+      '<label class="dq-item"><input type="checkbox" data-dq="contact"'+(off.contact?"":" checked")+'> '+esc(T().dq_contact)+'</label>';
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll("input[data-dq]"), function(cb){
+      cb.onchange = function(){
+        var id = cb.getAttribute("data-dq");
+        var arr = cfgState.disabled_questions = cfgState.disabled_questions || [];
+        var ix = arr.indexOf(id);
+        if(cb.checked && ix !== -1) arr.splice(ix,1);
+        if(!cb.checked && ix === -1) arr.push(id);
+      };
+    });
+  }
+
+  /* --- custom intro / outro texts --- */
+  function renderTextsEditor(){
+    var el = document.getElementById("textsEditor");
+    var kinds = [["intro_title","t_intro_title"],["intro_text","t_intro_text"],["outro_text","t_outro_text"]];
+    el.innerHTML = kinds.map(function(kk){
+      var rows = ["de","fr","it","en"].map(function(L){
+        var v = ((cfgState.texts||{})[kk[0]]||{})[L] || "";
+        return '<div class="txt-row"><span class="lg">'+L.toUpperCase()+'</span>'+
+          '<textarea data-txt="'+kk[0]+':'+L+'">'+esc(v)+'</textarea></div>';
+      }).join("");
+      return '<div class="txt-kind">'+esc(T()[kk[1]])+'</div>'+rows;
+    }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll("[data-txt]"), function(ta){
+      ta.oninput = function(){
+        var p = ta.getAttribute("data-txt").split(":");
+        cfgState.texts = cfgState.texts || {};
+        cfgState.texts[p[0]] = cfgState.texts[p[0]] || {};
+        if(ta.value.trim()) cfgState.texts[p[0]][p[1]] = ta.value; else delete cfgState.texts[p[0]][p[1]];
+      };
+    });
+  }
+
+  /* --- public dashboard panel selection --- */
+  var PUB_KEYS = ["age","gender","edu","means","region"];
+  function pubDefaults(){ return {age:true, gender:true, edu:true, means:true, region:true}; }
+  function renderPubPanels(){
+    var el = document.getElementById("pubPanels");
+    var pp = cfgState.public_panels || pubDefaults();
+    el.innerHTML = PUB_KEYS.map(function(k){
+      return '<label class="pub-item"><input type="checkbox" data-pub="'+k+'"'+(pp[k]!==false?" checked":"")+'> '+esc(T()["pub_"+k])+'</label>';
+    }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll("input[data-pub]"), function(cb){
+      cb.onchange = function(){
+        cfgState.public_panels = cfgState.public_panels || pubDefaults();
+        cfgState.public_panels[cb.getAttribute("data-pub")] = cb.checked;
+      };
+    });
+  }
+
+  /* --- Word export of the questionnaire (Word-HTML .doc, dependency-free) --- */
+  function wordExport(){
+    var L = document.getElementById("wordLang").value || "de";
+    var off = {}; (cfgState.disabled_questions||[]).forEach(function(id){ off[id]=true; });
+    var byPos = {};
+    cfgState.custom_questions.forEach(function(cq,i){
+      cq = { id:"CQ"+(i+1), type:cq.type||"scale5c", pos:cq.pos||"about", text:cq.text||{},
+             anchors:cq.anchors||{}, options:cq.options||{}, intro:cq.intro||{} };
+      (byPos[cq.pos] = byPos[cq.pos] || []).push(cq);
+    });
+    function escH(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    function scaleLine(n, ends, dk){
+      var cells = "1 = "+(ends[0]||"")+" … "+n+" = "+(ends[1]||"");
+      return '<p class="scale">'+escH(cells)+' &nbsp;|&nbsp; '+escH(dk)+'</p>';
+    }
+    var texts = cfgState.texts || {};
+    function tx(kind, fallback){ return (texts[kind]&&texts[kind][L]) || fallback; }
+    var html = '<h1>'+escH(tx("intro_title", UI[L].start_sub))+'</h1>'+
+               '<p>'+escH(tx("intro_text", UI[L].start_intro))+'</p>';
+    function renderCustom(cq){
+      if(!(cq.text[L])) return "";
+      var s = "";
+      if(cq.intro[L]) s += '<p class="qintro">'+escH(cq.intro[L])+'</p>';
+      s += '<p class="q">'+escH(cq.text[L])+'</p>';
+      if(cq.type==="scale5c" || cq.type==="scale7c"){
+        var a = cq.anchors[L] || cq.anchors.de || ["",""];
+        s += scaleLine(cq.type==="scale7c"?7:5, a, UI[L].dont_know);
+      } else if(cq.type==="yesno"){
+        s += '<p class="scale">'+escH(UI[L].yes)+' / '+escH(UI[L].no)+' / '+escH(UI[L].no_answer)+'</p>';
+      } else if(cq.type==="dropdown"){
+        var op = cq.options[L] || [];
+        s += '<ul>'+op.map(function(o){ return '<li>'+escH(o)+'</li>'; }).join("")+'</ul>';
+      } else {
+        s += '<p class="scale">___________________________________________</p>';
+      }
+      return s;
+    }
+    (byPos["start"]||[]).forEach(function(cq){ html += renderCustom(cq); });
+    PAGES.forEach(function(pg){
+      var qs = pg.items
+        .filter(function(id){ return !off[id]; })
+        .map(function(id){ return QUESTIONS.filter(function(q){return q.id===id;})[0]; }).filter(Boolean);
+      if(qs.length){
+        html += '<h2>'+escH(pg.title[L])+'</h2>';
+        if(pg.intro) html += '<p class="intro">'+escH(pg.intro[L])+'</p>';
+        var headerDone = {};
+        qs.forEach(function(q){
+          html += '<p class="q">'+escH(q.text[L])+'</p>';
+          if(q.type==="scale5" || q.type==="scale7"){
+            var key = q.scale + (q.type==="scale7"?"7":"5");
+            if(!headerDone[key]){
+              html += scaleLine(q.type==="scale7"?7:5, SCALES[q.scale][L], q.dkna ? UI[L].dont_know_na : UI[L].dont_know);
+              headerDone[key] = true;
+            }
+          } else if(q.type==="know4"){
+            if(!headerDone.know){ html += '<p class="scale">'+escH(KNOW_SCALE[L].join(" / "))+' | '+escH(UI[L].dont_know)+'</p>'; headerDone.know = true; }
+          } else if(q.type==="yesno"){
+            html += '<p class="scale">'+escH(UI[L].yes)+' / '+escH(UI[L].no)+' / '+escH(UI[L].no_answer)+'</p>';
+          } else if(q.type==="gender"){
+            html += '<p class="scale">'+escH(q.options[L].join(" / "))+'</p>';
+          } else if(q.type==="education"){
+            html += '<ul>'+q.options[L].map(function(o){ return '<li>'+escH(o)+'</li>'; }).join("")+'</ul>';
+          } else if(q.type==="canton"){
+            html += '<p class="scale">'+escH(UI[L].select_placeholder)+' (26 + «'+escH(CANTON_OUTSIDE[L])+'»)</p>';
+          } else if(q.type==="age"){
+            html += '<p class="scale">____ ____ ____ ____</p>';
+          }
+        });
+      }
+      (byPos[pg.key]||[]).forEach(function(cq){
+        if(!headerFor(cq)) return;
+        html += renderCustom(cq);
+      });
+      function headerFor(cq){ return true; }
+    });
+    if(!off.contact){
+      html += '<h2>'+escH(PAGES[PAGES.length-1].title[L])+'</h2>'+
+        '<p class="intro">'+escH(CONTACT.intro[L])+'</p>'+
+        '<ul>'+CONTACT.options[L].map(function(o){ return '<li>'+escH(o)+'</li>'; }).join("")+'</ul>'+
+        '<p class="q">'+escH(UI[L].contact_email_q)+'</p><p class="scale">___________________________</p>'+
+        '<p class="q">'+escH(UI[L].contact_post_q)+'</p>'+
+        '<p class="scale">'+escH(UI[L].contact_first)+': ______________ '+escH(UI[L].contact_last)+': ______________<br>'+
+        escH(UI[L].contact_street)+': ______________ '+escH(UI[L].contact_city)+': ______________</p>';
+    }
+    var outro = tx("outro_text", null);
+    html += '<h2>'+escH(UI[L].thanks_title)+'</h2>' + (outro ? '<p>'+escH(outro)+'</p>' : '');
+
+    var doc = '<html xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
+      '<head><meta charset="utf-8"><title>Fragebogen</title><style>'+
+      'body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;line-height:1.4}'+
+      'h1{font-size:16pt} h2{font-size:13pt;border-bottom:1pt solid #1d1d1d;padding-bottom:2pt;margin-top:18pt}'+
+      '.q{font-weight:bold;margin:10pt 0 2pt} .intro{font-style:italic} .qintro{color:#555}'+
+      '.scale{color:#555;font-size:10pt;margin:0 0 6pt} ul{margin:2pt 0 8pt}'+
+      '</style></head><body>'+html+'</body></html>';
+    var blob = new Blob(["\ufeff", doc], {type:"application/msword"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "fragebogen_"+(surveyId||"survey")+"_"+L+".doc";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  function collectConfig(){
+    var qs = cfgState.custom_questions
+      .map(function(cq,i){ return { id:"CQ"+(i+1), type:cq.type||"scale5c", pos:cq.pos||"about",
+                                    text:cq.text||{}, anchors:cq.anchors||{}, options:cq.options||{}, intro:cq.intro||{} }; })
+      .filter(function(cq){ return Object.keys(cq.text).length > 0; });
+    var cfg = { instrument: cfgState.instrument || "20", custom_questions: qs };
+    if(cfgState.color && cfgState.color !== "#e30613") cfg.color = cfgState.color;
+    if(cfgState.logo) cfg.logo = cfgState.logo;
+    var tx = {};
+    ["intro_title","intro_text","outro_text"].forEach(function(k){
+      var o = (cfgState.texts||{})[k];
+      if(o && Object.keys(o).some(function(L){ return o[L] && o[L].trim(); })){
+        tx[k] = {}; Object.keys(o).forEach(function(L){ if(o[L] && o[L].trim()) tx[k][L] = o[L]; });
+      }
+    });
+    if(Object.keys(tx).length) cfg.texts = tx;
+    if((cfgState.disabled_questions||[]).length) cfg.disabled_questions = cfgState.disabled_questions;
+    if(cfgState.public_panels) cfg.public_panels = cfgState.public_panels;
+    return cfg;
+  }
+
+  function wireSettings(){
+    document.getElementById("cfgColor").oninput = function(){ cfgState.color = this.value; };
+    document.getElementById("colorReset").onclick = function(){ cfgState.color = null; document.getElementById("cfgColor").value = "#e30613"; };
+    document.getElementById("cfgLogo").onchange = function(){
+      var f = this.files && this.files[0]; if(!f) return;
+      if(f.size > 300*1024){ alert(T().logo_note); this.value=""; return; }
+      var r = new FileReader();
+      r.onload = function(){ cfgState.logo = r.result; renderSettings(); };
+      r.readAsDataURL(f);
+    };
+    document.getElementById("logoRemove").onclick = function(){ cfgState.logo = null; renderSettings(); };
+    document.getElementById("cqAdd").onclick = function(){
+      cfgState.custom_questions.push({ type:"scale5c", text:{}, anchors:{} });
+      renderSettings();
+    };
+    document.getElementById("wordExport").onclick = wordExport;
+    document.getElementById("pubSave").onclick = function(){
+      var msg = document.getElementById("pubMsg"); msg.textContent = "";
+      if(isDemo){ msg.textContent = T().demo_disabled; return; }
+      sb.rpc("set_survey_config", {p_survey_id: surveyId, p_code: accessCode, p_config: collectConfig()})
+        .then(function(res){
+          msg.textContent = (!res.error && res.data === true) ? T().saved : T().save_err;
+          setTimeout(function(){ msg.textContent=""; }, 4000);
+        }).catch(function(){ msg.textContent = T().save_err; });
+    };
+    document.getElementById("cfgSave").onclick = function(){
+      var msg = document.getElementById("cfgMsg"); msg.textContent = "";
+      if(isDemo){ msg.textContent = T().demo_disabled; return; }
+      sb.rpc("set_survey_config", {p_survey_id: surveyId, p_code: accessCode, p_config: collectConfig()})
+        .then(function(res){
+          msg.textContent = (!res.error && res.data === true) ? T().saved : T().save_err;
+          setTimeout(function(){ msg.textContent=""; }, 4000);
+        }).catch(function(){ msg.textContent = T().save_err; });
+    };
+  }
+
+  /* ---- public share dashboard ---- */
+  function publicUrl(){
+    var dir = location.origin + location.pathname.replace(/[^\/]*$/, "");
+    return dir + "public.html?survey=" + encodeURIComponent(surveyId) + "&token=" + encodeURIComponent(shareToken || "");
+  }
+  function renderShare(){
+    var box = document.getElementById("shareBox");
+    if(shareToken){
+      box.innerHTML = '<span class="okmsg">'+T().share_active+'</span>'+
+        '<span class="sharelink" id="shareUrl">'+esc(publicUrl())+'</span>'+
+        '<button class="toolbtn" id="shareCopy">'+T().share_copy+'</button> '+
+        '<button class="toolbtn" id="shareRegen">'+T().share_regen+'</button> '+
+        '<button class="toolbtn" id="shareOff" style="border-color:var(--red);color:var(--red)">'+T().share_off+'</button>';
+      document.getElementById("shareCopy").onclick = function(){
+        var b = this;
+        try { navigator.clipboard.writeText(publicUrl()).then(function(){ b.textContent = T().share_copied;
+          setTimeout(function(){ b.textContent = T().share_copy; }, 2000); }); } catch(e){}
+      };
+      document.getElementById("shareRegen").onclick = function(){ setShare(false); };
+      document.getElementById("shareOff").onclick = function(){ setShare(true); };
+    } else {
+      box.innerHTML = '<span class="cfg-note">'+T().share_inactive+'</span><br>'+
+        '<button class="toolbtn" id="shareOn" style="margin-top:8px">'+T().share_on+'</button>';
+      document.getElementById("shareOn").onclick = function(){ setShare(false); };
+    }
+  }
+  function setShare(revoke){
+    if(isDemo){ return; }
+    sb.rpc("set_share_token", {p_survey_id: surveyId, p_code: accessCode, p_revoke: revoke})
+      .then(function(res){
+        if(res.error) return;
+        shareToken = (res.data && res.data.length) ? res.data : null;
+        renderShare();
+      });
+  }
+
+  /* ---- consent tab ---- */
+  function renderConsentTab(){
+    var st = document.getElementById("consentState");
+    st.textContent = consentState.granted
+      ? fillS(T().c_granted, {d: consentState.at ? new Date(consentState.at).toLocaleDateString() : "—"})
+      : T().c_notgranted;
+    document.getElementById("consentGrant").style.display = consentState.granted ? "none" : "";
+    document.getElementById("consentRevoke").style.display = consentState.granted ? "" : "none";
+  }
+  function wireConsent(){
+    function setConsent(grant){
+      var msg = document.getElementById("consentMsg"); msg.textContent = "";
+      if(isDemo){ msg.textContent = T().demo_disabled; return; }
+      sb.rpc("set_survey_consent", {p_survey_id: surveyId, p_code: accessCode, p_grant: grant})
+        .then(function(res){
+          if(res.error || !res.data) return;
+          consentState.granted = !!res.data.consent_granted;
+          consentState.at = res.data.consent_at;
+          renderConsentTab();
+        });
+    }
+    document.getElementById("consentGrant").onclick = function(){ setConsent(true); };
+    document.getElementById("consentRevoke").onclick = function(){ setConsent(false); };
+  }
+
+  function loadSettingsData(){
+    if(isDemo){
+      cfgState = { instrument:"20", color:"#0b7a63", logo:null,
+        texts:{}, disabled_questions:[], public_panels:null,
+        custom_questions:[{type:"scale5c", pos:"about", text:{de:"Wie hat Ihnen unsere Ausstellung gefallen?"}, anchors:{de:["gar nicht","sehr gut"]}}] };
+      applyTheme(cfgState.color);
+      renderSettings();
+      if(curData) render(curData);
+      return;
+    }
+    sb.rpc("get_survey_config", {p_survey_id: surveyId}).then(function(res){
+      var cfg = (res.data && res.data.config) || {};
+      cfgState = {
+        instrument: cfg.instrument || "20",
+        color: cfg.color || null,
+        logo: cfg.logo || null,
+        texts: cfg.texts || {},
+        disabled_questions: cfg.disabled_questions || [],
+        public_panels: cfg.public_panels || null,
+        custom_questions: (cfg.custom_questions || []).map(function(cq){
+          return { type: cq.type||"scale5c", pos: cq.pos||"about", text: cq.text||{},
+                   anchors: cq.anchors||{}, options: cq.options||{}, intro: cq.intro||{} };
+        })
+      };
+      applyTheme(cfgState.color);
+      renderSettings();
+      if(curData) render(curData);
+    });
+    sb.rpc("get_survey_consent", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+      if(res.error || !res.data) return;
+      consentState.granted = !!res.data.consent_granted;
+      consentState.at = res.data.consent_at;
+      shareToken = res.data.share_token || null;
+      renderShare(); renderConsentTab();
+    });
+  }
+  var params = new URLSearchParams(location.search);
+  if(params.get("survey")) document.getElementById("gSurvey").value = params.get("survey");
+
+  /* ---------- demo mode ---------- */
+  if(params.get("demo")==="1"){
+    isDemo = true;
+    gate.hidden = true; app.hidden = false;
+    document.getElementById("liveText").textContent = "Demo";
+    document.getElementById("csvBtn").disabled = true;
+    document.getElementById("delBtn").disabled = true;
+    document.getElementById("pdfBtn").onclick = pdfExport;
+    var demo = makeDemo();
+    curData = demo;
+    applyStatic(); render(demo);
+    wireSettings(); wireConsent(); loadSettingsData();
+    document.getElementById("surveyTag").textContent = "demo-survey ("+T().demo_items+")";
+    document.getElementById("refreshBtn").onclick = function(){ render(demo); };
+  } else {
+    applyStatic();
+    document.getElementById("gEnter").onclick = enter;
+    document.getElementById("gCode").addEventListener("keydown", function(e){ if(e.key==="Enter") enter(); });
+  }
+
+  function makeDemo(){
+    var dist = [];
+    QUESTIONS.forEach(function(q){
+      var vals = q.type==="know4" ? [1,2,3,4] : q.type==="scale7" ? [1,2,3,4,5,6,7] :
+                 q.type==="yesno" ? [1,2] : (q.type==="scale5" ? [1,2,3,4,5] : null);
+      if(!vals) return;
+      vals.forEach(function(v){ dist.push({k:q.id, v:String(v), c: 4+Math.floor(Math.random()*22)}); });
+      dist.push({k:q.id, v:"98", c: 2+Math.floor(Math.random()*5)});
+      dist.push({k:q.id, v:null, c: Math.floor(Math.random()*3)});
+    });
+    [1,2,3,4,5].forEach(function(v){ dist.push({k:"CQ1", v:String(v), c: 6+Math.floor(Math.random()*20)}); });
+    var mbs = [];
+    [["F2003",[4.4,3.4,4.0,2.7]],["F0505",[4.6,4.1,3.2,2.4]],["POL",[3.7,3.9,4.1,4.6]],["REL",[2.2,2.5,2.9,3.1]]].forEach(function(kk){
+      [1,2,3,4].forEach(function(s,i){ mbs.push({k:kk[0], segment:s, m:kk[1][i], n:20+s*3}); });
+    });
+    return {
+      total: 148, last_response_at: new Date(Date.now()-4*60000).toISOString(),
+      first_response_at: new Date(Date.now()-12*86400000).toISOString(),
+      median_duration_sec: 344, avg_age: 42.6,
+      means_by_segment: mbs,
+      idxsl_by_segment: {"1":{m:1.7,n:47},"2":{m:1.5,n:33},"3":{m:1.1,n:41},"4":{m:0.8,n:27}},
+      segments: {"1":47,"2":33,"3":41,"4":27},
+      avg_idx_sl: 1.24, avg_duration_sec: 372, avg_certainty: 0.83,
+      certainty_by_segment: {"1":0.88,"2":0.79,"3":0.81,"4":0.85},
+      segment_by_gender: [
+        {gender:1,segment:1,c:19},{gender:1,segment:2,c:18},{gender:1,segment:3,c:20},{gender:1,segment:4,c:14},
+        {gender:2,segment:1,c:26},{gender:2,segment:2,c:14},{gender:2,segment:3,c:19},{gender:2,segment:4,c:12},
+        {gender:3,segment:1,c:2},{gender:3,segment:2,c:1},{gender:3,segment:3,c:2},{gender:3,segment:4,c:1}],
+      segment_by_age: [
+        {grp:"15-34",segment:1,c:18},{grp:"15-34",segment:2,c:12},{grp:"15-34",segment:3,c:11},{grp:"15-34",segment:4,c:7},
+        {grp:"35-54",segment:1,c:16},{grp:"35-54",segment:2,c:12},{grp:"35-54",segment:3,c:15},{grp:"35-54",segment:4,c:9},
+        {grp:"55+",segment:1,c:11},{grp:"55+",segment:2,c:8},{grp:"55+",segment:3,c:13},{grp:"55+",segment:4,c:9},
+        {grp:"na",segment:1,c:2},{grp:"na",segment:2,c:1},{grp:"na",segment:3,c:2},{grp:"na",segment:4,c:2}],
+      segment_by_edu: [
+        {grp:"low",segment:1,c:3},{grp:"low",segment:2,c:4},{grp:"low",segment:3,c:8},{grp:"low",segment:4,c:9},
+        {grp:"mid",segment:1,c:17},{grp:"mid",segment:2,c:15},{grp:"mid",segment:3,c:20},{grp:"mid",segment:4,c:12},
+        {grp:"high",segment:1,c:25},{grp:"high",segment:2,c:13},{grp:"high",segment:3,c:11},{grp:"high",segment:4,c:4},
+        {grp:"na",segment:1,c:2},{grp:"na",segment:2,c:1},{grp:"na",segment:3,c:2},{grp:"na",segment:4,c:2}],
+      segment_by_canton: [
+        {grp:"ZH",segment:1,c:16},{grp:"ZH",segment:2,c:9},{grp:"ZH",segment:3,c:11},{grp:"ZH",segment:4,c:6},
+        {grp:"BE",segment:1,c:8},{grp:"BE",segment:2,c:6},{grp:"BE",segment:3,c:8},{grp:"BE",segment:4,c:5},
+        {grp:"AG",segment:1,c:6},{grp:"AG",segment:2,c:5},{grp:"AG",segment:3,c:6},{grp:"AG",segment:4,c:4},
+        {grp:"TI",segment:1,c:4},{grp:"TI",segment:2,c:3},{grp:"TI",segment:3,c:4},{grp:"TI",segment:4,c:3},
+        {grp:"EXT",segment:1,c:5},{grp:"EXT",segment:2,c:4},{grp:"EXT",segment:3,c:4},{grp:"EXT",segment:4,c:3},
+        {grp:"na",segment:1,c:3},{grp:"na",segment:2,c:2},{grp:"na",segment:3,c:3},{grp:"na",segment:4,c:3}],
+      item_dist: dist
+    };
+  }
+
+  function enter(){
+    var err = document.getElementById("gateErr");
+    surveyId = document.getElementById("gSurvey").value.trim();
+    var code = document.getElementById("gCode").value;
+    if(!surveyId){ err.textContent = T().gate_err_id; return; }
+    if(!sb){ err.textContent = T().gate_err_nocfg; return; }
+    err.textContent = T().checking;
+    sb.rpc("survey_summary_secured", {p_survey_id: surveyId, p_code: code}).then(function(res){
+      if(res.error || res.data === null || res.data === false){ err.textContent = T().gate_err_bad; return; }
+      gate.hidden = true; app.hidden = false;
+      document.getElementById("surveyTag").textContent = surveyId;
+      accessCode = code;
+      curData = res.data; render(res.data);
+      wireSettings(); wireConsent(); loadSettingsData();
+      document.getElementById("refreshBtn").onclick = load;
+      document.getElementById("csvBtn").onclick = downloadCsv;
+      document.getElementById("pdfBtn").onclick = pdfExport;
+      wireDelete();
+      try {
+        sb.channel("resp-"+surveyId)
+          .on("postgres_changes", {event:"INSERT", schema:"public", table:"responses", filter:"survey_id=eq."+surveyId},
+              function(){ load(); flashLive(); })
+          .subscribe();
+      } catch(e){}
+      setInterval(load, 15000);
+    }).catch(function(){ err.textContent = T().gate_err_net; });
+  }
+  function flashLive(){
+    var t = document.getElementById("liveText");
+    t.textContent = T().newresp; setTimeout(function(){ t.textContent = "Live"; }, 2500);
+  }
+  function load(){
+    sb.rpc("survey_summary_secured", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+      if(!res.error && res.data){ curData = res.data; render(res.data); }
+    });
+  }
+
+  /* ---------- rendering ---------- */
+  function segName(s){ return SEGMENT_NAMES[s][lang]; }
+
+  function render(d){
+    var total = d.total || 0;
+    var segs = d.segments || {};
+    var certs = d.certainty_by_segment || {};
+    var counts = [1,2,3,4].map(function(s){ return segs[String(s)] || 0; });
+
+    /* --- Overview --- */
+    var lastTxt = d.last_response_at ? timeAgo(new Date(d.last_response_at)) : "—";
+    var firstTxt = d.first_response_at ? new Date(d.first_response_at).toLocaleDateString() : "—";
+    var avgMin = d.avg_duration_sec ? (Math.round(d.avg_duration_sec/6)/10)+" min" : "—";
+    var medMin = d.median_duration_sec ? (Math.round(d.median_duration_sec/6)/10)+" min" : "—";
+    document.getElementById("kpis").innerHTML =
+      kpi(total, T().k_total) + kpi(firstTxt, T().k_first) + kpi(lastTxt, T().k_last) +
+      kpi(avgMin, T().k_dur) + kpi(medMin, T().k_median) +
+      kpi(d.avg_age != null ? d.avg_age : "—", T().k_age);
+
+    var ageRows = d.segment_by_age || [], genderRows = d.segment_by_gender || [], eduRows = d.segment_by_edu || [];
+    renderOverallDist("ovAge", ageRows, function(r){return r.grp;}, ["15-34","35-54","55+","na"], function(g){return T().age[g]||g;});
+    renderOverallDist("ovGender", genderRows, function(r){return r.gender==null?"null":String(r.gender);}, ["1","2","3","null"], function(g){return T().gender[g]||g;});
+    renderOverallDist("ovEdu", eduRows, function(r){return r.grp;}, ["low","mid","high","na"], function(g){return T().edu[g]||g;});
+
+    /* --- Segments --- */
+    if(total===0){
+      document.getElementById("segBars").innerHTML = '<div class="empty">'+esc(T().nodata)+'</div>';
+    } else {
+      document.getElementById("segBars").innerHTML = [1,2,3,4].map(function(s,i){
+        var c = counts[i], pct = total? Math.round(c/total*100):0;
+        var ct = certs[String(s)] != null ? ' · '+Math.round(certs[String(s)]*100)+'% '+T().certainty : '';
+        return '<div class="segrow">'+
+          '<div class="segname"><span class="swatch" style="background:'+SEGC[s]+'"></span>'+esc(segName(s))+'</div>'+
+          '<div class="pbar"><span style="width:'+(total? c/total*100:0)+'%;background:'+SEGC[s]+'"></span></div>'+
+          '<div class="segval"><b>'+c+'</b> · '+pct+'%'+ct+'</div>'+
+        '</div>';
+      }).join("");
+    }
+    renderSegDist("sgAge", ageRows, function(r){return r.grp;}, ["15-34","35-54","55+","na"], function(g){return T().age[g]||g;});
+    renderSegDist("sgGender", genderRows, function(r){return r.gender==null?"null":String(r.gender);}, ["1","2","3","null"], function(g){return T().gender[g]||g;});
+    renderSegDist("sgEdu", eduRows, function(r){return r.grp;}, ["low","mid","high","na"], function(g){return T().edu[g]||g;});
+    renderSegMeans(d);
+    renderSegRegion(d.segment_by_canton || []);
+
+    /* --- Per-question --- */
+    renderItems(d.item_dist || []);
+  }
+
+  /* Overall distribution of one variable (summed across segments) */
+  function renderOverallDist(elId, rows, keyFn, order, labelFn){
+    var by = {}; var total = 0, maxc = 0;
+    rows.forEach(function(r){ var g = keyFn(r); by[g] = (by[g]||0) + r.c; total += r.c; });
+    order.forEach(function(g){ if(by[g] > maxc) maxc = by[g]; });
+    var el = document.getElementById(elId);
+    if(total===0){ el.innerHTML = '<div class="empty">'+esc(T().nodata)+'</div>'; return; }
+    el.innerHTML = order.filter(function(g){ return by[g]; }).map(function(g){
+      var c = by[g], pct = Math.round(c/total*100);
+      return '<div class="distrow"><div class="dl">'+esc(labelFn(g))+'</div>'+
+        '<div class="pbar"><span style="width:'+(maxc? c/maxc*100:0)+'%;background:'+SEGC[1]+'"></span></div>'+
+        '<div class="dv"><b>'+c+'</b> · '+pct+'%</div></div>';
+    }).join("");
+  }
+
+  /* One variable per segment: 4 rows (segments), 100% stacked by category */
+  function renderSegDist(elId, rows, keyFn, order, labelFn){
+    var by = {}; // segment -> category -> c
+    rows.forEach(function(r){
+      var g = keyFn(r);
+      by[r.segment] = by[r.segment] || {};
+      by[r.segment][g] = (by[r.segment][g]||0) + r.c;
+    });
+    var el = document.getElementById(elId);
+    var any = false;
+    var html = [1,2,3,4].map(function(s){
+      var o = by[s] || {}; var tot = 0;
+      order.forEach(function(g){ tot += o[g]||0; });
+      if(tot===0) return "";
+      any = true;
+      var stack = order.map(function(g,gi){
+        var c = o[g]||0, w = c/tot*100;
+        if(w<=0) return "";
+        var lbl = w>=12 ? '<span class="pl'+(gi>=order.length-2?' dk1':'')+'" style="width:100%">'+Math.round(w)+'%</span>' : '';
+        return '<span style="width:'+w+'%;background:'+rampColor(order.length-gi, order.length)+'" title="'+esc(labelFn(g))+': '+c+'">'+lbl+'</span>';
+      }).join("");
+      return '<div class="distrow"><div class="dl" title="'+esc(segName(s))+'"><span class="swatch" style="background:'+SEGC[s]+';display:inline-block;vertical-align:-1px;margin-right:6px"></span>'+esc(segName(s))+'</div>'+
+             '<div class="dtrack">'+stack+'</div></div>';
+    }).join("");
+    html += '<div class="qlegend" style="margin-top:6px">'+order.map(function(g,gi){
+      return '<span><i style="background:'+rampColor(order.length-gi, order.length)+'"></i>'+esc(labelFn(g))+'</span>';
+    }).join("")+'</div>';
+    el.innerHTML = any ? html : '<div class="empty">'+esc(T().nodata)+'</div>';
+  }
+
+  /* Mean values per segment for trust / interest / POL / REL / literacy */
+  function renderSegMeans(d){
+    var el = document.getElementById("sgMeans");
+    var rows = d.means_by_segment || [];
+    var byK = {};
+    rows.forEach(function(r){ byK[r.k] = byK[r.k] || {}; byK[r.k][r.segment] = r; });
+    var lit = d.idxsl_by_segment || {};
+    var metrics = [
+      {k:"F2003", label:T().m_trust, max:5},
+      {k:"F0505", label:T().m_interest, max:5},
+      {k:"POL", label:T().m_pol, max:7},
+      {k:"REL", label:T().m_rel, max:5},
+      {k:"__lit", label:T().m_lit, max:2}
+    ];
+    var any = false;
+    var html = metrics.map(function(m){
+      var vals = [1,2,3,4].map(function(s){
+        if(m.k === "__lit") return lit[String(s)] ? {m:+lit[String(s)].m, n:lit[String(s)].n} : null;
+        var r = (byK[m.k]||{})[s];
+        return r ? {m:+r.m, n:r.n} : null;
+      });
+      if(!vals.some(function(v){ return v; })) return "";
+      any = true;
+      var bars = [1,2,3,4].map(function(s,i){
+        var v = vals[i];
+        if(!v) return "";
+        return '<div class="mbar"><div class="sn"><span class="swatch" style="background:'+SEGC[s]+'"></span>'+esc(segName(s))+'</div>'+
+          '<div class="mtrack" style="background:'+mixWhite(KEYCOLOR,0.94)+'"><i style="width:'+(v.m/m.max*100)+'%;background:'+SEGC[s]+'"></i></div>'+
+          '<div class="mv">'+v.m.toFixed(1)+'</div></div>';
+      }).join("");
+      return '<div class="meanrow"><div class="ml">'+esc(m.label)+'</div><div class="mbars">'+bars+'</div></div>';
+    }).join("");
+    el.innerHTML = any ? html : '<div class="empty">'+esc(T().nodata)+'</div>';
+  }
+
+  /* Language region per segment, derived from canton */
+  function renderSegRegion(rows){
+    var mapped = rows.map(function(r){
+      var reg = r.grp === "na" ? "na" : (REGION_OF[r.grp] || "na");
+      return { grp: reg, segment: r.segment, c: r.c };
+    });
+    renderSegDist("sgRegion", mapped, function(r){ return r.grp; },
+      ["de_reg","fr_reg","it_reg","ext","na"], function(g){ return T().reg[g] || g; });
+  }
+  function kpi(n,l){ return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+
+  function drawDonut(counts, total){
+    var svg = document.getElementById("donut");
+    svg.innerHTML = '<circle cx="21" cy="21" r="15.9155" fill="none" stroke="#fdece3" stroke-width="6"/>';
+    if(total===0){ svg.innerHTML += '<text x="21" y="23" text-anchor="middle" font-size="6" fill="#5f5f5f">0</text>'; return; }
+    var offset = 25;
+    [1,2,3,4].forEach(function(s,i){
+      var len = counts[i]/total*100;
+      if(len<=0) return;
+      svg.innerHTML += '<circle cx="21" cy="21" r="15.9155" fill="none" stroke="'+SEGC[s]+'" stroke-width="6" stroke-dasharray="'+len+' '+(100-len)+'" stroke-dashoffset="'+offset+'"/>';
+      offset -= len;
+    });
+    svg.innerHTML += '<text x="21" y="20.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d1d1d" font-family="Bebas Neue">'+total+'</text>'+
+                     '<text x="21" y="26" text-anchor="middle" font-size="3" fill="#5f5f5f">total</text>';
+  }
+
+  function renderBreakdown(elId, rows, keyFn, order, labelFn, sortByTotal){
+    var byG = {};
+    rows.forEach(function(r){
+      var g = keyFn(r);
+      byG[g] = byG[g] || {total:0, seg:{1:0,2:0,3:0,4:0}};
+      byG[g].seg[r.segment] += r.c; byG[g].total += r.c;
+    });
+    var keys = order ? order.filter(function(g){ return byG[g]; }) : Object.keys(byG);
+    if(sortByTotal) keys.sort(function(a,b){
+      if(a==="na") return 1; if(b==="na") return -1;
+      return byG[b].total - byG[a].total;
+    });
+    var el = document.getElementById(elId);
+    if(keys.length===0){ el.innerHTML = '<div class="empty">'+esc(T().nodata)+'</div>'; return; }
+    el.innerHTML = keys.map(function(g){
+      var o = byG[g];
+      var stack = [1,2,3,4].map(function(s){
+        var c = o.seg[s], w = o.total? (c/o.total*100):0;
+        return w>0 ? '<span style="width:'+w+'%;background:'+SEGC[s]+'"></span>' : '';
+      }).join("");
+      return '<div class="barcol"><div class="cap">'+esc(labelFn(g))+' <span>· '+o.total+'</span></div>'+
+             '<div class="stack">'+stack+'</div></div>';
+    }).join("");
+  }
+
+  /* ---------- per-question distributions ---------- */
+  function rampColor(i, n){       // 1..n -> light..dark tint of the key colour
+    if(n===1) return KEYCOLOR;
+    var pct = 0.85 - (i-1)/(n-1)*0.85;     // 85% white ... 0%
+    return mixWhite(KEYCOLOR, pct);
+  }
+  var GRAY_DK = "#9a9a9a", GRAY_MISS = "#dddddd";
+  function barSeg(widthPct, color, darkText, title){
+    var lbl = widthPct >= 9 ? '<span class="pl'+(darkText?' dk1':'')+'" style="width:100%">'+Math.round(widthPct)+'%</span>' : '';
+    return '<span style="width:'+widthPct+'%;background:'+color+'"'+(title?' title="'+title+'"':'')+'>'+lbl+'</span>';
+  }
+
+  function renderItems(dist){
+    var byItem = {};
+    dist.forEach(function(r){
+      byItem[r.k] = byItem[r.k] || {};
+      var v = (r.v === null || r.v === undefined) ? "null" : String(r.v);
+      byItem[r.k][v] = (byItem[r.k][v] || 0) + r.c;
+    });
+
+    document.getElementById("qLegend").innerHTML =
+      '<span><i style="background:'+rampColor(1,5)+'"></i>1 → <i style="background:'+rampColor(5,5)+'"></i>max</span>'+
+      '<span><i style="background:'+GRAY_DK+'"></i>'+esc(T().dk)+'</span>'+
+      '<span><i style="background:'+GRAY_MISS+'"></i>'+esc(T().missing)+'</span>';
+
+    var html = "";
+    PAGES.forEach(function(pg){
+      var qs = pg.items.map(function(id){ return QUESTIONS.filter(function(q){return q.id===id;})[0]; })
+        .filter(function(q){ return q && ["scale5","scale7","know4","yesno"].indexOf(q.type) !== -1; });
+      if(qs.length===0) return;
+      html += '<h3>'+esc(pg.title[lang])+'</h3>';
+      qs.forEach(function(q){
+        var counts = byItem[q.id] || {};
+        var n = q.type==="scale7" ? 7 : q.type==="know4" ? 4 : q.type==="yesno" ? 2 : 5;
+        var totalAll = 0, valid = 0, sum = 0;
+        Object.keys(counts).forEach(function(v){ totalAll += counts[v]; });
+        var segs = "";
+        for(var i=1;i<=n;i++){
+          var c = counts[String(i)] || 0;
+          valid += c; sum += i*c;
+          if(c>0 && totalAll>0) segs += barSeg(c/totalAll*100, rampColor(i,n), (i-1)/(Math.max(n-1,1)) < 0.5, i+': '+c);
+        }
+        var dk = counts["98"] || 0;
+        if(dk>0 && totalAll>0) segs += barSeg(dk/totalAll*100, GRAY_DK, false, "");
+        var miss = counts["null"] || 0;
+        if(miss>0 && totalAll>0) segs += barSeg(miss/totalAll*100, GRAY_MISS, true, "");
+        var meta = totalAll===0 ? "—" :
+          (q.type==="yesno"
+            ? (valid>0 ? Math.round((counts["1"]||0)/valid*100)+'% '+T().yes : "—") + ' · n='+totalAll
+            : (valid>0 ? T().mean+' '+(Math.round(sum/valid*100)/100) : "—") + ' · n='+totalAll);
+        html += '<div class="qrow"><div class="qt">'+esc(q.text[lang])+'</div>'+
+                '<div class="qstack">'+segs+'</div>'+
+                '<div class="qmeta">'+meta+'</div></div>';
+      });
+    });
+    // customer-defined questions
+    if(cfgState.custom_questions.length){
+      html += '<h3>'+esc(T().p_custom_items)+'</h3>';
+      cfgState.custom_questions.forEach(function(cq, i){
+        var id = "CQ"+(i+1);
+        var label = (cq.text && (cq.text[lang] || cq.text.de || cq.text.en || cq.text.fr || cq.text.it)) || id;
+        var counts = byItem[id] || {};
+        var totalAll = 0; Object.keys(counts).forEach(function(v){ totalAll += counts[v]; });
+        if(cq.type === "text"){
+          var answered = totalAll - (counts["null"] || 0);
+          html += '<div class="qrow"><div class="qt">'+esc(label)+'</div><div></div>'+
+                  '<div class="qmeta">'+fillS(T().cq_answered, {n: answered})+'</div></div>';
+          return;
+        }
+        var n = cq.type === "yesno" ? 2 : (cq.type === "scale7c" ? 7 : (cq.type === "dropdown" ? ((cq.options && (cq.options.de||cq.options.en||cq.options.fr||cq.options.it)) || []).length || 5 : 5));
+        var segs = "", valid = 0, sum = 0;
+        for(var v=1; v<=n; v++){
+          var c = counts[String(v)] || 0; valid += c; sum += v*c;
+          if(c>0 && totalAll>0) segs += barSeg(c/totalAll*100, rampColor(v,n), (v-1)/(Math.max(n-1,1)) < 0.5, "");
+        }
+        var dk = counts["98"] || 0;
+        if(dk>0 && totalAll>0) segs += barSeg(dk/totalAll*100, GRAY_DK, false, "");
+        var miss = counts["null"] || 0;
+        if(miss>0 && totalAll>0) segs += barSeg(miss/totalAll*100, GRAY_MISS, true, "");
+        var meta = totalAll===0 ? "—" :
+          (cq.type==="yesno"
+            ? (valid>0 ? Math.round((counts["1"]||0)/valid*100)+'% '+T().yes : "—") + ' · n='+totalAll
+            : (valid>0 ? T().mean+' '+(Math.round(sum/valid*100)/100) : "—") + ' · n='+totalAll);
+        html += '<div class="qrow"><div class="qt">'+esc(label)+'</div>'+
+                '<div class="qstack">'+segs+'</div><div class="qmeta">'+meta+'</div></div>';
+      });
+    }
+    document.getElementById("itemPanels").innerHTML = html || '<div class="empty">'+esc(T().nodata)+'</div>';
+  }
+
+  /* ---------- PDF results report ---------- */
+  function hexRgb(hex){
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex);
+    var n = parseInt(m ? m[1] : "e30613", 16);
+    return [(n>>16)&255, (n>>8)&255, n&255];
+  }
+  function pdfExport(){
+    if(!curData || !window.jspdf) return;
+    var d = curData;
+    var doc = new window.jspdf.jsPDF({unit:"mm", format:"a4"});
+    var W = 210, ML = 18, MR = 18, CW = W - ML - MR, y = 20;
+    var INK = [29,29,29], GRAY = [95,95,95];
+    var total = d.total || 0;
+    var segs = d.segments || {};
+    var counts = [1,2,3,4].map(function(s){ return segs[String(s)] || 0; });
+
+    function ensure(h){ if(y + h > 279){ doc.addPage(); y = 18; } }
+    function head(txt, size){
+      ensure(14);
+      doc.setFont("helvetica","bold"); doc.setFontSize(size||14); doc.setTextColor(INK[0],INK[1],INK[2]);
+      doc.text(txt, ML, y); y += 3;
+      doc.setDrawColor(INK[0],INK[1],INK[2]); doc.setLineWidth(0.6); doc.line(ML, y, W-MR, y);
+      y += 7;
+    }
+    function small(txt){
+      doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+      doc.text(txt, ML, y); y += 5;
+    }
+    function bar(x, yy, w, hgt, color){
+      var c = hexRgb(color); doc.setFillColor(c[0],c[1],c[2]); doc.rect(x, yy, Math.max(w,0.4), hgt, "F");
+    }
+    function stackedRow(label, parts, rowW){   // parts: [{w(0..1), color, lbl}]
+      ensure(8);
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(INK[0],INK[1],INK[2]);
+      doc.text(label.length>34 ? label.slice(0,32)+"…" : label, ML, y+3.4);
+      var x = ML + 52;
+      var bw = (rowW || (CW-52));
+      parts.forEach(function(p){
+        var w = p.w * bw;
+        if(w <= 0) return;
+        bar(x, y, w, 4.6, p.color);
+        if(p.lbl && w >= 9){
+          doc.setFontSize(7); doc.setTextColor(255,255,255);
+          if(p.dark) doc.setTextColor(INK[0],INK[1],INK[2]);
+          doc.text(p.lbl, x + w/2, y+3.3, {align:"center"});
+          doc.setTextColor(INK[0],INK[1],INK[2]);
+        }
+        x += w;
+      });
+      y += 7;
+    }
+
+    /* cover header */
+    doc.setFont("helvetica","bold"); doc.setFontSize(22); doc.setTextColor(INK[0],INK[1],INK[2]);
+    doc.text(T().title, ML, y); 
+    var kc = hexRgb(KEYCOLOR);
+    doc.setTextColor(kc[0],kc[1],kc[2]); doc.text(".", ML + doc.getTextWidth(T().title) + 1, y);
+    y += 7;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+    doc.text((surveyId||"demo-survey") + " · " + new Date().toLocaleString(), ML, y);
+    y += 10;
+
+    /* Summary */
+    head(T().sec_overview, 14);
+    var lastTxt = d.last_response_at ? new Date(d.last_response_at).toLocaleString() : "—";
+    var firstTxt = d.first_response_at ? new Date(d.first_response_at).toLocaleDateString() : "—";
+    var kpis = [
+      [T().k_total, String(total)],
+      [T().k_first, firstTxt],
+      [T().k_last, lastTxt],
+      [T().k_dur, d.avg_duration_sec ? (Math.round(d.avg_duration_sec/6)/10)+" min" : "—"],
+      [T().k_median, d.median_duration_sec ? (Math.round(d.median_duration_sec/6)/10)+" min" : "—"],
+      [T().k_age, d.avg_age != null ? String(d.avg_age) : "—"],
+      [T().k_cert, d.avg_certainty != null ? Math.round(d.avg_certainty*100)+"%" : "—"]
+    ];
+    doc.setFontSize(9.5);
+    kpis.forEach(function(k){
+      ensure(6);
+      doc.setFont("helvetica","normal"); doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]); doc.text(k[0], ML, y);
+      doc.setFont("helvetica","bold"); doc.setTextColor(INK[0],INK[1],INK[2]); doc.text(k[1], ML+70, y);
+      y += 5.4;
+    });
+    y += 3;
+
+    function overallBlock(title, rows, keyFn, order, labelFn){
+      var by = {}, maxc = 0, tot = 0;
+      rows.forEach(function(r){ var g = keyFn(r); by[g] = (by[g]||0)+r.c; tot += r.c; });
+      order.forEach(function(g){ if(by[g] > maxc) maxc = by[g]; });
+      if(!tot) return;
+      ensure(10);
+      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(INK[0],INK[1],INK[2]);
+      doc.text(title, ML, y); y += 5;
+      order.filter(function(g){ return by[g]; }).forEach(function(g){
+        ensure(7);
+        var c = by[g];
+        doc.setFont("helvetica","normal"); doc.setFontSize(8.5);
+        doc.text(labelFn(g), ML, y+3.2);
+        bar(ML+52, y, (c/maxc)*(CW-70), 4.4, KEYCOLOR);
+        doc.text(c + " · " + Math.round(c/tot*100) + "%", ML+52+(c/maxc)*(CW-70)+2, y+3.2);
+        y += 6.4;
+      });
+      y += 3;
+    }
+    var ageRows = d.segment_by_age||[], genderRows = d.segment_by_gender||[], eduRows = d.segment_by_edu||[];
+    overallBlock(T().p_agedist, ageRows, function(r){return r.grp;}, ["15-34","35-54","55+","na"], function(g){return T().age[g]||g;});
+    overallBlock(T().p_genderdist, genderRows, function(r){return r.gender==null?"null":String(r.gender);}, ["1","2","3","null"], function(g){return T().gender[g]||g;});
+    overallBlock(T().p_edudist, eduRows, function(r){return r.grp;}, ["low","mid","high","na"], function(g){return T().edu[g]||g;});
+
+    /* Segments */
+    head(T().sec_segments, 14);
+    [1,2,3,4].forEach(function(s,i){
+      ensure(8);
+      var c = counts[i], pct = total ? Math.round(c/total*100) : 0;
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(INK[0],INK[1],INK[2]);
+      doc.text(segName(s), ML, y+3.4);
+      bar(ML+52, y, total ? (c/total)*(CW-70) : 0, 4.6, SEGC[s]);
+      doc.text(c + " · " + pct + "%", ML+52+(total?(c/total)*(CW-70):0)+2, y+3.4);
+      y += 7;
+    });
+    y += 3;
+
+    function segBlock(title, rows, keyFn, order, labelFn){
+      var by = {};
+      rows.forEach(function(r){
+        var g = keyFn(r);
+        by[r.segment] = by[r.segment] || {};
+        by[r.segment][g] = (by[r.segment][g]||0)+r.c;
+      });
+      var any = [1,2,3,4].some(function(s){ return by[s]; });
+      if(!any) return;
+      ensure(12);
+      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.text(title, ML, y); y += 5;
+      [1,2,3,4].forEach(function(s){
+        var o = by[s]||{}; var tot = 0;
+        order.forEach(function(g){ tot += o[g]||0; });
+        if(!tot) return;
+        stackedRow(segName(s), order.map(function(g,gi){
+          var w = (o[g]||0)/tot;
+          return { w:w, color:rampColor(order.length-gi, order.length),
+                   lbl: w>=0.09 ? Math.round(w*100)+"%" : null, dark: gi>=order.length-2 };
+        }));
+      });
+      // legend
+      ensure(6);
+      var x = ML+52;
+      doc.setFont("helvetica","normal"); doc.setFontSize(7.5);
+      order.forEach(function(g,gi){
+        var c = hexRgb(rampColor(order.length-gi, order.length));
+        doc.setFillColor(c[0],c[1],c[2]); doc.rect(x, y-2.6, 3, 3, "F");
+        doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+        var lb = labelFn(g);
+        doc.text(lb, x+4, y);
+        x += 4 + doc.getTextWidth(lb) + 5;
+      });
+      doc.setTextColor(INK[0],INK[1],INK[2]);
+      y += 7;
+    }
+    segBlock(T().p_seg_age, ageRows, function(r){return r.grp;}, ["15-34","35-54","55+","na"], function(g){return T().age[g]||g;});
+    segBlock(T().p_seg_gender, genderRows, function(r){return r.gender==null?"null":String(r.gender);}, ["1","2","3","null"], function(g){return T().gender[g]||g;});
+    segBlock(T().p_seg_edu, eduRows, function(r){return r.grp;}, ["low","mid","high","na"], function(g){return T().edu[g]||g;});
+    var regRows = (d.segment_by_canton||[]).map(function(r){
+      return { grp: r.grp==="na" ? "na" : (REGION_OF[r.grp]||"na"), segment: r.segment, c: r.c };
+    });
+    segBlock(T().p_seg_region, regRows, function(r){return r.grp;}, ["de_reg","fr_reg","it_reg","ext","na"], function(g){return T().reg[g]||g;});
+
+    // means
+    var mrows = d.means_by_segment || [];
+    if(mrows.length || d.idxsl_by_segment){
+      ensure(12);
+      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.text(T().p_seg_means, ML, y); y += 5;
+      var byK = {};
+      mrows.forEach(function(r){ byK[r.k] = byK[r.k]||{}; byK[r.k][r.segment] = r; });
+      var lit = d.idxsl_by_segment || {};
+      [ {k:"F2003",label:T().m_trust,max:5},{k:"F0505",label:T().m_interest,max:5},
+        {k:"POL",label:T().m_pol,max:7},{k:"REL",label:T().m_rel,max:5},{k:"__lit",label:T().m_lit,max:2}
+      ].forEach(function(m){
+        var vals = [1,2,3,4].map(function(s){
+          if(m.k==="__lit") return lit[String(s)] ? +lit[String(s)].m : null;
+          var r = (byK[m.k]||{})[s]; return r ? +r.m : null;
+        });
+        if(!vals.some(function(v){ return v != null; })) return;
+        ensure(6+4*6);
+        doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.text(m.label, ML, y+3); y += 5;
+        [1,2,3,4].forEach(function(s,i){
+          if(vals[i]==null) return;
+          ensure(6);
+          doc.setFont("helvetica","normal"); doc.setFontSize(8);
+          doc.text(segName(s), ML+4, y+3);
+          bar(ML+52, y, (vals[i]/m.max)*(CW-80), 3.8, SEGC[s]);
+          doc.text(vals[i].toFixed(1), ML+52+(vals[i]/m.max)*(CW-80)+2, y+3);
+          y += 5.4;
+        });
+        y += 2.5;
+      });
+    }
+
+    /* Per-question appendix */
+    head(T().sec_items, 14);
+    var dist = d.item_dist || [];
+    var byItem = {};
+    dist.forEach(function(r){
+      byItem[r.k] = byItem[r.k] || {};
+      var v = (r.v===null||r.v===undefined) ? "null" : String(r.v);
+      byItem[r.k][v] = (byItem[r.k][v]||0) + r.c;
+    });
+    PAGES.forEach(function(pg){
+      var qs = pg.items.map(function(id){ return QUESTIONS.filter(function(q){return q.id===id;})[0]; })
+        .filter(function(q){ return q && ["scale5","scale7","know4","yesno"].indexOf(q.type) !== -1 && byItem[q.id]; });
+      if(!qs.length) return;
+      ensure(10);
+      doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.text(pg.title[lang], ML, y); y += 5;
+      qs.forEach(function(q){
+        var counts2 = byItem[q.id];
+        var n = q.type==="scale7" ? 7 : q.type==="know4" ? 4 : q.type==="yesno" ? 2 : 5;
+        var totalAll = 0; Object.keys(counts2).forEach(function(v){ totalAll += counts2[v]; });
+        if(!totalAll) return;
+        var parts = [];
+        for(var i2=1;i2<=n;i2++){
+          var c2 = counts2[String(i2)]||0;
+          parts.push({ w:c2/totalAll, color:rampColor(i2,n),
+                       lbl: c2/totalAll>=0.09 ? Math.round(c2/totalAll*100)+"%" : null,
+                       dark: (i2-1)/(Math.max(n-1,1)) < 0.5 });
+        }
+        var dk = counts2["98"]||0, miss = counts2["null"]||0;
+        if(dk) parts.push({w:dk/totalAll, color:"#9a9a9a", lbl:null});
+        if(miss) parts.push({w:miss/totalAll, color:"#dddddd", lbl:null});
+        stackedRow(q.text[lang], parts);
+      });
+      y += 2;
+    });
+
+    doc.save((T().pdf_report||"report").toLowerCase().replace(/\s+/g,"_")+"_"+(surveyId||"survey")+"_"+new Date().toISOString().slice(0,10)+".pdf");
+  }
+
+  /* ---------- CSV export ---------- */
+  function downloadCsv(){
+    if(!sb || !surveyId) return;
+    sb.rpc("survey_export_secured", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+      if(res.error || !res.data) return;
+      var rows = res.data;
+      var itemIds = QUESTIONS.map(function(q){ return q.id; });
+      var base = ["id","created_at","survey_id","language","segment","segment_label",
+                  "prob_sciencephiles","prob_critically_interested","prob_passive_supporters","prob_disengaged",
+                  "idx_sl","n_missing","age_year","gender","education","canton","duration_sec","contact_type"];
+      var contactCols = ["email","first","last","street","city"];
+      var header = base.concat(itemIds.map(function(i){ return "ans_"+i; }))
+                       .concat(contactCols.map(function(c){ return "contact_"+c; }));
+      var lines = [header.join(",")];
+      rows.forEach(function(r){
+        var vals = base.map(function(k){ return csvCell(r[k]); });
+        var a = r.answers || {};
+        itemIds.forEach(function(i){ vals.push(csvCell(a[i])); });
+        var ct = r.contact || {};
+        contactCols.forEach(function(c){ vals.push(csvCell(ct[c])); });
+        lines.push(vals.join(","));
+      });
+      var blob = new Blob(["\uFEFF"+lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "responses_"+surveyId+"_"+new Date().toISOString().slice(0,10)+".csv";
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    });
+  }
+  function csvCell(v){
+    if(v === null || v === undefined) return "";
+    var s = String(v);
+    if(/[",\n\r;]/.test(s)) s = '"'+s.replace(/"/g,'""')+'"';
+    return s;
+  }
+
+  /* ---------- delete with confirmation ---------- */
+  function wireDelete(){
+    var box = document.getElementById("confirmBox");
+    var msg = document.getElementById("delMsg");
+    document.getElementById("delBtn").onclick = function(){ box.hidden = false; msg.textContent = ""; };
+    document.getElementById("delNo").onclick = function(){ box.hidden = true; };
+    document.getElementById("delYes").onclick = function(){
+      box.hidden = true;
+      sb.rpc("survey_delete_secured", {p_survey_id: surveyId, p_code: accessCode}).then(function(res){
+        if(res.error || res.data === null){ msg.textContent = T().gate_err_net; return; }
+        msg.textContent = fillS(T().deleted, {n: res.data});
+        load();
+      });
+    };
+  }
+
+  function timeAgo(dt){
+    var s = Math.round((Date.now()-dt.getTime())/1000);
+    if(s<60) return s+"s"; if(s<3600) return Math.round(s/60)+"m";
+    if(s<86400) return Math.round(s/3600)+"h"; return Math.round(s/86400)+"d";
+  }
+})();
+</script>
+</body>
+</html>
