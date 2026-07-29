@@ -1,0 +1,168 @@
+# Science audience segmentation — questionnaire & live dashboard
+
+A multilingual (DE / FR / IT / EN) online questionnaire that places each respondent
+into one of the four **Wissenschaftsbarometer Schweiz** audience segments, plus a
+per-customer live dashboard showing segment counts in real time.
+
+Built to be hosted for free on **GitHub Pages** (static front-end) with
+**Supabase** (Zurich region) as the data backend.
+
+## The four segments
+
+The typology is ordinal, from most to least engaged with science:
+
+1. **Sciencephiles** (DE: Sciencephile, FR: Scientophiles, IT: Sciencephile) — strongly interested, informed, high trust
+2. **Critically Interested** (Kritisch Interessierte / Intéressés critiques / Interessati critici) — pro science but with lower trust, favouring clear limits
+3. **Passive Supporters** (Passive Unterstützer / Soutiens passifs / Sostenitori passivi) — favourable but from a distance, little interest
+4. **Skeptics** (Skeptische / Sceptiques / Scettici) — little interest, distanced, rather distrustful
+
+## How classification works
+
+Each completed questionnaire is scored **in the respondent's browser** by
+`js/scoring.js`, an exact port of the official SPSS TwoStep cluster-classification
+syntax (`Syntax_BerechnungSegmente_CATI_2022.sps`). The score uses 20 variables:
+science interest, two information-behaviour items, eight "goals of science" items,
+seven "promise/reservations" items, trust in science, and a scientific-literacy
+index built from five knowledge items.
+
+Only the resulting segment (plus coarse aggregates) is sent to the database — the
+scoring never needs a server, and works even before the backend is configured.
+
+### Validated against the original data
+
+`validation/validate_scoring.py` re-scores all 1,052 respondents from the 2022
+CATI dataset and checks the result against the SPSS assignments:
+
+```
+Agreement with SPSS: 1052/1052 = 100.00%
+PASS — exact replication of the SPSS typology.
+```
+
+The JavaScript port reproduces the same 1,052/1,052 assignments.
+
+## What's in here
+
+```
+index.html              The questionnaire (what respondents fill in)
+dashboard.html          The live monitoring dashboard (one per customer)
+js/
+  scoring.js            Segment classification (validated SPSS port)
+  content.js            All questionnaire wording in DE / FR / IT
+  config.js             ← edit this: Supabase URL, key, survey ID
+img/logo.png            Wissenschaftsbarometer logo
+fonts/                  Drop your licensed Akkurat Pro .woff2 files here
+supabase/
+  schema.sql            Database tables, security rules, dashboard function
+validation/
+  validate_scoring.py   Reproducible proof the scoring matches SPSS
+DEPLOYMENT.md           Step-by-step hosting & per-customer setup
+```
+
+## Quick preview (no setup)
+
+- Open `index.html` in a browser — the questionnaire runs and shows the
+  respondent's segment at the end. Without a configured backend it simply
+  skips the save step (preview mode).
+- Open `dashboard.html?demo=1` — the dashboard renders with sample data.
+
+## Deploying for real
+
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for the full walkthrough: creating the
+Supabase project in the Zurich region, running `schema.sql`, filling in
+`config.js`, publishing to GitHub Pages, and adding a customer with their own
+access-protected dashboard.
+
+## A note on the questionnaire
+
+This online version asks the 20 segmentation items **plus** extra interest
+topics, two additional trust items, a science-connection block, religiosity,
+political orientation, demographics (birth year, gender, education, canton) and
+a voluntary follow-up contact question — on 9 thematic pages with the classic
+grid layout and randomized item order within batteries. Only the 20 validated
+items feed the classification; everything else is stored for monitoring.
+The DE/FR/IT wording of official items follows the 2022 instrument; the EN
+version and a few added items (interest topics, contact block) are project
+translations, not validated instrument wording. It deliberately omits the many other questions from the full 20-minute
+CATI interview. The classification model is applied unchanged, but because the
+surrounding question context differs from the original telephone survey, treat the
+segment shares as a close indication rather than an exact reproduction of official
+Wissenschaftsbarometer figures. See DEPLOYMENT.md for more on this.
+
+## Attribution
+
+Instrument and typology: **Wissenschaftsbarometer Schweiz**, Universität Zürich.
+Use of the instrument and typology requires permission from the Wissenschaftsbarometer team.
+
+
+## Platform features (v2)
+
+Customers manage their survey themselves in the dashboard's **Einstellungen**
+tab: key colour and logo (embedded, max. 300 KB), their own questions
+(scale / yes-no / free text, per-language texts — languages without text are
+hidden), and the segmentation instrument. The 10-item short form (Füchslin,
+Schäfer & Metag 2018) and the 1-item screener (Schäfer, Füchslin, Mede &
+Dvorzhitskaia 2026) appear in the selector but stay disabled until their
+classification materials are integrated; every stored response records the
+instrument used.
+
+The **Datenfreigabe** tab lets customers grant or revoke data-use consent to
+the Wissenschaftsbarometer team. The **central hub** (hub.html, master admin
+code via `select set_admin_code('…')`) lists all surveys with counts and
+consent status; full summaries and CSV exports are only possible for
+consenting surveys — enforced in the database, and exports never contain the
+voluntary contact details.
+
+A **public dashboard** (public.html) can be enabled per survey from the
+settings tab: a revocable token link showing totals, the segment distribution
+and demographic breakdowns — no per-question results, no export. It adopts
+the survey's custom branding.
+
+
+## v3 highlights
+
+The customer dashboard is now "Live-Ergebnisse" with three sections: an
+**overview** (totals, first/last response, mean and median duration, mean age,
+age/gender/education distributions), a **segments** section (bars scaled to
+total responses; age, gender, education, language region and mean values for
+trust, interest, political orientation, religiosity and scientific literacy —
+each per segment), and **results per question** with percentage labels. The
+entire dashboard, all graphics and the public dashboard re-tint to the
+customer's key colour, including the segment palette (darkest tint =
+Sciencephiles, lightest = Skeptics).
+
+Customers can now: place their own questions after any page (5-point and
+7-point scales, yes/no, dropdown, free text, optional per-question intro),
+deselect any non-segmentation default question (the 24 segmentation items are
+locked), write their own title, introduction and closing texts, choose which
+panels the public dashboard shows (own tab), and export the questionnaire as
+a Word document in any of the four languages.
+
+The hub is now **Admin.Hub**: project leads can create customers and reset
+access codes directly (codes are shown exactly once and stored hashed), and
+the instrument column reads "Segmentationsinstrument".
+
+
+## v4 highlights
+
+The **10-item short form** is live: customers can switch the segmentation
+instrument in the settings. Classification follows the published 10-item
+syntax of Füchslin, Schäfer & Metag (2018, Environmental Communication,
+supplementary material); the JavaScript port was verified digit-identical
+against the supplement and reproduces the published development-sample
+assignments 1051/1051 with probability deviations below 2e-15. In
+short-form mode the questionnaire asks the ten segmentation items plus the
+personal details by default; every other default question can be re-enabled
+individually. Every response records the instrument used.
+
+The Segments section (dashboard and PDF report) now shows **assignment
+certainty** (mean probability of the assigned segment) and **clarity**
+(mean gap between the most likely and second most likely segment) per
+instrument, with plain-language explainers in all four languages — computed
+retroactively for all existing responses from the stored probabilities.
+
+Also new: log-out buttons on the customer dashboard and Admin.Hub, the
+dashboard action buttons in a single row below the heading in all
+languages, percentage labels centred in the bar segments with
+luminance-based contrast (dark text on light tints), and the public
+dashboard's Segments section restructured to match the customer dashboard
+(100% stacked bars without counts, two-column rows, legend below).
